@@ -64,14 +64,34 @@ ORDER BY
   column_name;
 
 -- Verify all required columns exist
+-- Support both note_id (standard) and id (legacy) column names
 DO $$
 DECLARE
   missing_columns TEXT[];
+  has_note_id BOOLEAN;
+  has_id BOOLEAN;
 BEGIN
+  -- Check for note_id or id column
+  SELECT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' AND table_name = 'notes' AND column_name = 'note_id'
+  ) INTO has_note_id;
+  
+  SELECT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'public' AND table_name = 'notes' AND column_name = 'id'
+  ) INTO has_id;
+  
+  -- Require either note_id or id
+  IF NOT has_note_id AND NOT has_id THEN
+    RAISE EXCEPTION '❌ Missing required column: note_id or id';
+  END IF;
+  
+  -- Check for other required columns
   SELECT ARRAY_AGG(required_col)
   INTO missing_columns
   FROM (
-    SELECT unnest(ARRAY['note_id', 'created_at', 'closed_at', 'longitude', 'latitude']) AS required_col
+    SELECT unnest(ARRAY['created_at', 'closed_at', 'longitude', 'latitude']) AS required_col
   ) req
   WHERE NOT EXISTS (
     SELECT 1 FROM information_schema.columns 
@@ -149,12 +169,12 @@ BEGIN
         AND column_name = req.required_col
     );
 
-    -- Check for country_name_en or country_name (at least one should exist)
+    -- Check for country_name_en, country_name, or name (at least one should exist)
     IF NOT EXISTS (
       SELECT 1 FROM information_schema.columns 
       WHERE table_schema = 'public' 
         AND table_name = 'countries' 
-        AND column_name IN ('country_name_en', 'country_name')
+        AND column_name IN ('country_name_en', 'country_name', 'name')
     ) THEN
       IF missing_columns IS NULL THEN
         missing_columns := ARRAY['country_name_en'];

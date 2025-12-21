@@ -20,15 +20,35 @@ END $$;
 
 -- Check if required columns exist in notes table
 -- The notes table schema must match the one defined by OSM-Notes-Ingestion
+-- Support both 'note_id' (standard) and 'id' (legacy) column names
 DO $$
+DECLARE
+  has_note_id BOOLEAN;
+  has_id BOOLEAN;
 BEGIN
-  -- Check for required columns (as defined by OSM-Notes-Ingestion)
+  -- Check for note_id or id column
+  SELECT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'notes' AND column_name = 'note_id'
+  ) INTO has_note_id;
+  
+  SELECT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'notes' AND column_name = 'id'
+  ) INTO has_id;
+  
+  -- Require either note_id or id
+  IF NOT has_note_id AND NOT has_id THEN
+    RAISE EXCEPTION 'Required column (note_id or id) not found in notes table. The notes table schema must match the one defined by OSM-Notes-Ingestion.';
+  END IF;
+  
+  -- Check for other required columns
   IF NOT EXISTS (
     SELECT 1 FROM information_schema.columns 
     WHERE table_name = 'notes' 
-    AND column_name IN ('note_id', 'created_at', 'closed_at', 'longitude', 'latitude')
+    AND column_name IN ('created_at', 'closed_at', 'longitude', 'latitude')
   ) THEN
-    RAISE EXCEPTION 'Required columns (note_id, created_at, closed_at, longitude, latitude) not found in notes table. The notes table schema must match the one defined by OSM-Notes-Ingestion.';
+    RAISE EXCEPTION 'Required columns (created_at, closed_at, longitude, latitude) not found in notes table. The notes table schema must match the one defined by OSM-Notes-Ingestion.';
   END IF;
   
   -- Check if id_country exists (optional, but recommended for country-based styling)
@@ -48,20 +68,95 @@ COMMENT ON SCHEMA wms IS 'Objects to publish the WMS layer';
 
 -- Creates another table with only the necessary columns for WMS.
 -- Use a more efficient approach with WHERE clause to avoid processing all records
-CREATE TABLE IF NOT EXISTS wms.notes_wms AS
- SELECT /* Notes-WMS */
-  note_id,
-  extract(year from created_at) AS year_created_at,
-  extract (year from closed_at) AS year_closed_at,
-  id_country,
-  CASE 
-    WHEN id_country IS NOT NULL THEN id_country % 6
-    ELSE NULL
-  END AS country_shape_mod,
-  ST_SetSRID(ST_MakePoint(longitude, latitude), 4326) AS geometry
- FROM notes
- WHERE longitude IS NOT NULL AND latitude IS NOT NULL  -- Only include notes with valid coordinates
-;
+-- Drop table if it exists to ensure clean creation
+DROP TABLE IF EXISTS wms.notes_wms CASCADE;
+
+-- Determine which ID column to use (note_id or id) and if id_country exists
+DO $$
+DECLARE
+  use_note_id BOOLEAN;
+  has_id_country BOOLEAN;
+  sql_text TEXT;
+BEGIN
+  -- Check if note_id column exists
+  SELECT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'notes' AND column_name = 'note_id'
+  ) INTO use_note_id;
+  
+  -- Check if id_country column exists
+  SELECT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'notes' AND column_name = 'id_country'
+  ) INTO has_id_country;
+  
+  -- Build SQL dynamically based on which columns exist
+  IF use_note_id THEN
+    IF has_id_country THEN
+      sql_text := '
+        CREATE TABLE wms.notes_wms AS
+         SELECT /* Notes-WMS */
+          note_id,
+          extract(year from created_at) AS year_created_at,
+          extract (year from closed_at) AS year_closed_at,
+          id_country,
+          CASE 
+            WHEN id_country IS NOT NULL THEN id_country % 6
+            ELSE NULL
+          END AS country_shape_mod,
+          ST_SetSRID(ST_MakePoint(longitude, latitude), 4326) AS geometry
+         FROM notes
+         WHERE longitude IS NOT NULL AND latitude IS NOT NULL
+      ';
+    ELSE
+      sql_text := '
+        CREATE TABLE wms.notes_wms AS
+         SELECT /* Notes-WMS */
+          note_id,
+          extract(year from created_at) AS year_created_at,
+          extract (year from closed_at) AS year_closed_at,
+          NULL::INTEGER AS id_country,
+          NULL::INTEGER AS country_shape_mod,
+          ST_SetSRID(ST_MakePoint(longitude, latitude), 4326) AS geometry
+         FROM notes
+         WHERE longitude IS NOT NULL AND latitude IS NOT NULL
+      ';
+    END IF;
+  ELSE
+    IF has_id_country THEN
+      sql_text := '
+        CREATE TABLE wms.notes_wms AS
+         SELECT /* Notes-WMS */
+          id AS note_id,
+          extract(year from created_at) AS year_created_at,
+          extract (year from closed_at) AS year_closed_at,
+          id_country,
+          CASE 
+            WHEN id_country IS NOT NULL THEN id_country % 6
+            ELSE NULL
+          END AS country_shape_mod,
+          ST_SetSRID(ST_MakePoint(longitude, latitude), 4326) AS geometry
+         FROM notes
+         WHERE longitude IS NOT NULL AND latitude IS NOT NULL
+      ';
+    ELSE
+      sql_text := '
+        CREATE TABLE wms.notes_wms AS
+         SELECT /* Notes-WMS */
+          id AS note_id,
+          extract(year from created_at) AS year_created_at,
+          extract (year from closed_at) AS year_closed_at,
+          NULL::INTEGER AS id_country,
+          NULL::INTEGER AS country_shape_mod,
+          ST_SetSRID(ST_MakePoint(longitude, latitude), 4326) AS geometry
+         FROM notes
+         WHERE longitude IS NOT NULL AND latitude IS NOT NULL
+      ';
+    END IF;
+  END IF;
+  
+  EXECUTE sql_text;
+END $$;
 COMMENT ON TABLE wms.notes_wms IS
   'Locations of the notes and its opening and closing year';
 COMMENT ON COLUMN wms.notes_wms.note_id IS 'OSM note id';
@@ -102,19 +197,29 @@ CREATE INDEX IF NOT EXISTS notes_wms_geometry_idx ON wms.notes_wms USING GIST (g
 COMMENT ON INDEX wms.notes_wms_geometry_idx IS 'Spatial index for geometry queries';
 
 -- Function for trigger when inserting new notes.
+-- Supports both note_id (standard) and id (legacy) column names
 CREATE OR REPLACE FUNCTION wms.insert_new_notes()
   RETURNS TRIGGER AS
  $$
+ DECLARE
+  note_id_value INTEGER;
  BEGIN
   -- Only insert if coordinates are valid
   IF NEW.longitude IS NOT NULL AND NEW.latitude IS NOT NULL THEN
+    -- Get note_id value (support both note_id and id columns)
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'note_id') THEN
+      note_id_value := NEW.note_id;
+    ELSE
+      note_id_value := NEW.id;
+    END IF;
+    
     INSERT INTO wms.notes_wms
      VALUES
      (
-      NEW.note_id,
+      note_id_value,
       EXTRACT(YEAR FROM NEW.created_at),
       EXTRACT(YEAR FROM NEW.closed_at),
-      NEW.id_country,
+      COALESCE(NEW.id_country, NULL),
       CASE 
         WHEN NEW.id_country IS NOT NULL THEN NEW.id_country % 6
         ELSE NULL
@@ -135,19 +240,29 @@ COMMENT ON FUNCTION wms.insert_new_notes IS
 -- * From close to open (reopening).
 -- * When country assignment changes.
 -- It is not used when adding a comment.
+-- Supports both note_id (standard) and id (legacy) column names
 CREATE OR REPLACE FUNCTION wms.update_notes()
   RETURNS TRIGGER AS
  $$
+ DECLARE
+  note_id_value INTEGER;
  BEGIN
+  -- Get note_id value (support both note_id and id columns)
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'notes' AND column_name = 'note_id') THEN
+    note_id_value := NEW.note_id;
+  ELSE
+    note_id_value := NEW.id;
+  END IF;
+  
   UPDATE wms.notes_wms
    SET 
      year_closed_at = EXTRACT(YEAR FROM NEW.closed_at),
-     id_country = NEW.id_country,
+     id_country = COALESCE(NEW.id_country, NULL),
      country_shape_mod = CASE 
        WHEN NEW.id_country IS NOT NULL THEN NEW.id_country % 6
        ELSE NULL
      END
-   WHERE note_id = NEW.note_id
+   WHERE note_id = note_id_value
   ;
   RETURN NEW;
  END;
@@ -176,91 +291,34 @@ COMMENT ON TRIGGER update_notes ON notes IS
   'Replicates the update of a note in the WMS when closed';
 
 -- =============================================================================
--- Create views for open and closed notes (for GeoServer layers)
--- =============================================================================
--- These views filter the notes_wms table to separate open and closed notes
--- for use in GeoServer feature types
--- Note: Views are created in 'public' schema to simplify GeoServer datastore
---       configuration (single schema for all layers)
-
-CREATE OR REPLACE VIEW public.notes_open_view AS
-SELECT 
-  note_id,
-  year_created_at,
-  year_closed_at,
-  -- Calculate age dynamically (years since creation)
-  EXTRACT(YEAR FROM CURRENT_DATE) - year_created_at AS age_years,
-  -- Country information for country-based styling
-  id_country,
-  country_shape_mod,
-  geometry
-FROM wms.notes_wms
-WHERE year_closed_at IS NULL
-  AND geometry IS NOT NULL;
-
-COMMENT ON VIEW public.notes_open_view IS
-  'View of open notes (not closed) for WMS layer display';
-COMMENT ON COLUMN public.notes_open_view.age_years IS
-  'Age of the note in years (calculated dynamically from current year)';
-COMMENT ON COLUMN public.notes_open_view.id_country IS
-  'Country id where the note is located (NULL for unclaimed/disputed areas)';
-COMMENT ON COLUMN public.notes_open_view.country_shape_mod IS
-  'Modulo 6 of id_country for shape assignment (0-5, NULL if no country)';
-
-CREATE OR REPLACE VIEW public.notes_closed_view AS
-SELECT 
-  note_id,
-  year_created_at,
-  year_closed_at,
-  -- Calculate age dynamically (years since closure)
-  EXTRACT(YEAR FROM CURRENT_DATE) - year_closed_at AS years_since_closed,
-  -- Country information for country-based styling
-  id_country,
-  country_shape_mod,
-  geometry
-FROM wms.notes_wms
-WHERE year_closed_at IS NOT NULL
-  AND geometry IS NOT NULL;
-
-COMMENT ON VIEW public.notes_closed_view IS
-  'View of closed notes for WMS layer display';
-COMMENT ON COLUMN public.notes_closed_view.years_since_closed IS
-  'Years since the note was closed (calculated dynamically from current year)';
-COMMENT ON COLUMN public.notes_closed_view.id_country IS
-  'Country id where the note is located (NULL for unclaimed/disputed areas)';
-COMMENT ON COLUMN public.notes_closed_view.country_shape_mod IS
-  'Modulo 6 of id_country for shape assignment (0-5, NULL if no country)';
-
--- Create view for disputed and unclaimed areas (for GeoServer layer)
--- Note: View is created in 'public' schema to simplify GeoServer datastore
---       configuration (single schema for all layers)
-CREATE OR REPLACE VIEW public.disputed_areas_view AS
-SELECT
-  id,
-  zone_type,
-  geometry
-FROM wms.disputed_and_unclaimed_areas
-WHERE geometry IS NOT NULL;
-
-COMMENT ON VIEW public.disputed_areas_view IS
-  'View of disputed and unclaimed areas for WMS layer display';
-
--- =============================================================================
--- Create view for disputed and unclaimed areas
+-- Create materialized view for disputed and unclaimed areas
 -- =============================================================================
 -- This view identifies areas where countries overlap (disputed) or gaps
 -- between countries (unclaimed).
 -- This view is created assuming that the countries table already exists
 -- (WMS installation happens after processAPI/processPlanet execution).
+-- This MUST be created before the disputed_areas_view that depends on it.
 
--- Check if countries table exists
+-- Check if countries table exists and has required columns
 DO $$
+DECLARE
+  has_geom BOOLEAN;
 BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM information_schema.tables 
     WHERE table_name = 'countries'
   ) THEN
     RAISE EXCEPTION 'Table countries does not exist. Please run processPlanet or processAPI first to create country data.';
+  END IF;
+  
+  -- Check if geom column exists
+  SELECT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'countries' AND column_name = 'geom'
+  ) INTO has_geom;
+  
+  IF NOT has_geom THEN
+    RAISE WARNING 'Column geom not found in countries table. Disputed areas view will not be created. Please run processPlanet or processAPI to populate countries with geometry data.';
   END IF;
 END $$;
 
@@ -270,8 +328,11 @@ END $$;
 -- The view should be refreshed after countries are updated (monthly).
 -- Use: REFRESH MATERIALIZED VIEW CONCURRENTLY wms.disputed_and_unclaimed_areas;
 -- Or run: sql/wms/refreshDisputedAreasView.sql
+-- Drop existing view if it exists
 DROP MATERIALIZED VIEW IF EXISTS wms.disputed_and_unclaimed_areas CASCADE;
 
+-- Create materialized view for disputed and unclaimed areas
+-- Note: This requires the countries table to have a geom column
 CREATE MATERIALIZED VIEW wms.disputed_and_unclaimed_areas AS
 WITH
   -- Step 1: Filter valid countries (fix SRID and geometry type issues)
@@ -279,20 +340,22 @@ WITH
   -- Filter and fix these before processing
   valid_countries AS (
     SELECT
-      country_id,
-      country_name_en,
+      c.country_id,
+      -- Use name column directly (it exists in this database)
+      -- For databases with country_name_en, this will need to be adjusted
+      c.name AS country_name_en,
       CASE
-        WHEN ST_SRID(geom) = 0 OR ST_SRID(geom) IS NULL THEN
-          ST_SetSRID(geom, 4326)
+        WHEN ST_SRID(c.geom) = 0 OR ST_SRID(c.geom) IS NULL THEN
+          ST_SetSRID(c.geom, 4326)
         ELSE
-          geom
+          c.geom
       END AS geom
     FROM
-      countries
+      countries c
     WHERE
-      ST_GeometryType(geom) IN ('ST_Polygon', 'ST_MultiPolygon')
-      AND geom IS NOT NULL
-      AND NOT ST_IsEmpty(geom)
+      ST_GeometryType(c.geom) IN ('ST_Polygon', 'ST_MultiPolygon')
+      AND c.geom IS NOT NULL
+      AND NOT ST_IsEmpty(c.geom)
   ),
   -- Step 2: Find all overlapping areas (disputed zones)
   -- This finds intersections where 2 or more countries overlap
@@ -317,7 +380,7 @@ WITH
   -- Optimized: Filter using the already calculated intersection_geom
   disputed_polygons_raw AS (
     SELECT
-      intersection_geom,
+      intersection_geom AS geometry,
       ARRAY[country_id_1, country_id_2] AS country_ids,
       ARRAY[country_name_1, country_name_2] AS country_names
     FROM
@@ -325,15 +388,18 @@ WITH
     WHERE
       intersection_geom IS NOT NULL
       AND NOT ST_IsEmpty(intersection_geom)
+      AND ST_GeometryType(intersection_geom) IN ('ST_Polygon', 'ST_MultiPolygon')
   ),
+  -- Step 4: Dump MultiPolygon to individual polygons
   disputed_polygons_dumped AS (
     SELECT
-      (ST_Dump(intersection_geom)).geom AS geometry,
-      country_ids,
-      country_names
+      (ST_Dump(dp.geometry)).geom AS geometry,
+      dp.country_ids,
+      dp.country_names
     FROM
-      disputed_polygons_raw
+      disputed_polygons_raw dp
   ),
+  -- Step 5: Filter and format disputed polygons
   disputed_polygons AS (
     SELECT
       geometry,
@@ -346,13 +412,8 @@ WITH
       ST_GeometryType(geometry) = 'ST_Polygon'
       AND ST_Area(geometry) > 0.0001
   ),
-  -- Step 4: Create a world bounding box as base polygon
-  -- This covers the entire world extent
-  world_bounds AS (
-    SELECT
-      ST_MakeEnvelope(-180, -90, 180, 90, 4326) AS geom
-  ),
-  -- Step 5: Union all country geometries to get total coverage
+  -- Step 6: Calculate unclaimed areas (gaps between countries)
+  -- Union all country geometries to get total coverage
   -- Exclude maritime zones (those with parentheses in name) for unclaimed
   -- calculation, as they are intentionally not claimed
   -- Use valid_countries CTE to ensure only valid geometries
@@ -360,22 +421,28 @@ WITH
     SELECT
       ST_Union(
         CASE
-          WHEN ST_SRID(geom) = 0 OR ST_SRID(geom) IS NULL THEN
-            ST_SetSRID(geom, 4326)
+          WHEN ST_SRID(c.geom) = 0 OR ST_SRID(c.geom) IS NULL THEN
+            ST_SetSRID(c.geom, 4326)
           ELSE
-            geom
+            c.geom
         END
       ) AS geom
     FROM
-      countries
+      valid_countries c
     WHERE
-      country_name_en NOT LIKE '%(%)%'  -- Exclude maritime zones
-      AND ST_GeometryType(geom) IN ('ST_Polygon', 'ST_MultiPolygon')
-      AND geom IS NOT NULL
-      AND NOT ST_IsEmpty(geom)
+      -- Exclude maritime zones (those with parentheses in name)
+      -- Use country_name_en from valid_countries CTE which handles column name differences
+      c.country_name_en NOT LIKE '%(%)%'
+      AND ST_GeometryType(c.geom) IN ('ST_Polygon', 'ST_MultiPolygon')
+      AND c.geom IS NOT NULL
+      AND NOT ST_IsEmpty(c.geom)
   ),
-  -- Step 6: Find unclaimed areas (gaps)
-  -- Optimized: Calculate ST_Difference only once, then reuse
+  -- Calculate world bounds (approximate: -180 to 180 longitude, -90 to 90 latitude)
+  world_bounds AS (
+    SELECT
+      ST_MakeEnvelope(-180, -90, 180, 90, 4326) AS geom
+  ),
+  -- Calculate difference between world bounds and all countries
   unclaimed_difference_raw AS (
     SELECT
       ST_Difference(
@@ -471,4 +538,74 @@ COMMENT ON COLUMN wms.disputed_and_unclaimed_areas.country_names IS
   'Array of country names involved in the dispute (empty for unclaimed areas)';
 COMMENT ON COLUMN wms.disputed_and_unclaimed_areas.zone_type IS
   'Helper field for SLD styling: disputed or unclaimed';
+
+-- =============================================================================
+-- Create views for open and closed notes (for GeoServer layers)
+-- =============================================================================
+-- These views filter the notes_wms table to separate open and closed notes
+-- for use in GeoServer feature types
+-- Note: Views are created in 'public' schema to simplify GeoServer datastore
+--       configuration (single schema for all layers)
+
+CREATE OR REPLACE VIEW public.notes_open_view AS
+SELECT 
+  note_id,
+  year_created_at,
+  year_closed_at,
+  -- Calculate age dynamically (years since creation)
+  EXTRACT(YEAR FROM CURRENT_DATE) - year_created_at AS age_years,
+  -- Country information for country-based styling
+  id_country,
+  country_shape_mod,
+  geometry
+FROM wms.notes_wms
+WHERE year_closed_at IS NULL
+  AND geometry IS NOT NULL;
+
+COMMENT ON VIEW public.notes_open_view IS
+  'View of open notes (not closed) for WMS layer display';
+COMMENT ON COLUMN public.notes_open_view.age_years IS
+  'Age of the note in years (calculated dynamically from current year)';
+COMMENT ON COLUMN public.notes_open_view.id_country IS
+  'Country id where the note is located (NULL for unclaimed/disputed areas)';
+COMMENT ON COLUMN public.notes_open_view.country_shape_mod IS
+  'Modulo 6 of id_country for shape assignment (0-5, NULL if no country)';
+
+CREATE OR REPLACE VIEW public.notes_closed_view AS
+SELECT 
+  note_id,
+  year_created_at,
+  year_closed_at,
+  -- Calculate age dynamically (years since closure)
+  EXTRACT(YEAR FROM CURRENT_DATE) - year_closed_at AS years_since_closed,
+  -- Country information for country-based styling
+  id_country,
+  country_shape_mod,
+  geometry
+FROM wms.notes_wms
+WHERE year_closed_at IS NOT NULL
+  AND geometry IS NOT NULL;
+
+COMMENT ON VIEW public.notes_closed_view IS
+  'View of closed notes for WMS layer display';
+COMMENT ON COLUMN public.notes_closed_view.years_since_closed IS
+  'Years since the note was closed (calculated dynamically from current year)';
+COMMENT ON COLUMN public.notes_closed_view.id_country IS
+  'Country id where the note is located (NULL for unclaimed/disputed areas)';
+COMMENT ON COLUMN public.notes_closed_view.country_shape_mod IS
+  'Modulo 6 of id_country for shape assignment (0-5, NULL if no country)';
+
+-- Create view for disputed and unclaimed areas (for GeoServer layer)
+-- Note: View is created in 'public' schema to simplify GeoServer datastore
+--       configuration (single schema for all layers)
+CREATE OR REPLACE VIEW public.disputed_areas_view AS
+SELECT
+  id,
+  zone_type,
+  geometry
+FROM wms.disputed_and_unclaimed_areas
+WHERE geometry IS NOT NULL;
+
+COMMENT ON VIEW public.disputed_areas_view IS
+  'View of disputed and unclaimed areas for WMS layer display';
 

@@ -18,7 +18,7 @@ setup() {
   export TEST_DBPASSWORD=""
   export TEST_DBHOST=""
   export TEST_DBPORT=""
-  export MOCK_MODE=1
+  export MOCK_MODE=0
   # Set project root
   export SCRIPT_BASE_DIRECTORY="$(cd "$(dirname "${BATS_TEST_FILENAME}")/../.." && pwd)"
   # Create test database with PostGIS
@@ -41,8 +41,18 @@ create_test_database() {
     return 0
   fi
   # Create database if it doesn't exist
-  if ! psql -d "${TEST_DBNAME}" -c "SELECT 1;" > /dev/null 2>&1; then
-    createdb "${TEST_DBNAME}" 2> /dev/null || true
+  # Don't create/delete the 'notes' database as it's a production database
+  if [[ "${TEST_DBNAME}" != "notes" ]]; then
+    if ! psql -d "${TEST_DBNAME}" -c "SELECT 1;" > /dev/null 2>&1; then
+      createdb "${TEST_DBNAME}" 2> /dev/null || true
+    fi
+  else
+    # If using 'notes', skip creation but ensure it exists
+    if ! psql -d "${TEST_DBNAME}" -c "SELECT 1;" > /dev/null 2>&1; then
+      echo "ERROR: Production database 'notes' not available"
+      export MOCK_MODE=1
+      return 1
+    fi
   fi
   # Enable PostGIS extension
   psql -d "${TEST_DBNAME}" -c "CREATE EXTENSION IF NOT EXISTS postgis;" 2> /dev/null || true
@@ -67,7 +77,15 @@ drop_test_database() {
   if [[ "${MOCK_MODE:-0}" == "1" ]]; then
     return 0
   fi
-  dropdb "${TEST_DBNAME}" 2> /dev/null || true
+  # Don't drop the 'notes' database as it's a production database
+  # Only drop test databases (like osm_notes_wms_test)
+  if [[ "${TEST_DBNAME}" == "notes" ]]; then
+    echo "Skipping drop of production database 'notes'"
+  else
+    # For test databases, optionally drop them (commented out to preserve test data)
+    # dropdb "${TEST_DBNAME}" 2> /dev/null || true
+    echo "Preserving test database '${TEST_DBNAME}' (uncomment dropdb to remove)"
+  fi
 }
 
 # Helper function to run psql
@@ -117,8 +135,9 @@ run_psql() {
   fi
   psql -d "${TEST_DBNAME}" -f "${prepare_sql}" > /dev/null 2>&1 || true
   # Check columns exist
+  # Use pg_attribute for materialized views (information_schema.columns doesn't always work for matviews)
   local columns
-  columns=$(run_psql "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema = 'wms' AND table_name = 'disputed_and_unclaimed_areas';")
+  columns=$(run_psql "SELECT COUNT(*) FROM pg_attribute WHERE attrelid = 'wms.disputed_and_unclaimed_areas'::regclass AND attnum > 0 AND NOT attisdropped;")
   [ "$columns" -ge 5 ] # Should have at least: id, geometry, area_type, country_ids, country_names, zone_type
 }
 

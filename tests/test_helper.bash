@@ -22,8 +22,18 @@ create_wms_test_database() {
   fi
   
   # Check if database exists, if not create it
-  if ! psql -d "${TEST_DBNAME}" -c "SELECT 1;" > /dev/null 2>&1; then
-    createdb "${TEST_DBNAME}" 2> /dev/null || true
+  # Don't create/delete the 'notes' database as it's a production database
+  if [[ "${TEST_DBNAME}" != "notes" ]]; then
+    if ! psql -d "${TEST_DBNAME}" -c "SELECT 1;" > /dev/null 2>&1; then
+      createdb "${TEST_DBNAME}" 2> /dev/null || true
+    fi
+  else
+    # If using 'notes', skip creation but ensure it exists
+    if ! psql -d "${TEST_DBNAME}" -c "SELECT 1;" > /dev/null 2>&1; then
+      echo "ERROR: Production database 'notes' not available"
+      export MOCK_MODE=1
+      return 1
+    fi
   fi
   
   # Enable PostGIS extension if not already enabled (required for WMS)
@@ -49,6 +59,21 @@ create_wms_test_database() {
       echo "Base tables created successfully using processPlanetNotes.sh --base"
       # Ensure PostGIS is still enabled after processPlanetNotes.sh (it may have been dropped)
       psql -d "${TEST_DBNAME}" -c "CREATE EXTENSION IF NOT EXISTS postgis;" 2> /dev/null || true
+      
+      # Ensure countries table has geom column (required for disputed areas view)
+      # If countries table exists but doesn't have geom, add it with sample data
+      if psql -d "${TEST_DBNAME}" -c "SELECT 1 FROM information_schema.tables WHERE table_name = 'countries';" > /dev/null 2>&1; then
+        if ! psql -d "${TEST_DBNAME}" -c "SELECT 1 FROM information_schema.columns WHERE table_name = 'countries' AND column_name = 'geom';" > /dev/null 2>&1; then
+          echo "Adding geom column to countries table..."
+          psql -d "${TEST_DBNAME}" -c "ALTER TABLE countries ADD COLUMN geom GEOMETRY(MultiPolygon, 4326);" 2> /dev/null || true
+          # Populate with sample geometries if table has data but geom is NULL
+          psql -d "${TEST_DBNAME}" -c "
+            UPDATE countries 
+            SET geom = ST_Multi(ST_MakeEnvelope(-180 + (country_id * 10), -90 + (country_id * 10), -170 + (country_id * 10), -80 + (country_id * 10), 4326))
+            WHERE geom IS NULL;
+          " 2> /dev/null || true
+        fi
+      fi
     else
       echo "Warning: processPlanetNotes.sh --base failed, falling back to manual table creation"
       echo "Check /tmp/processPlanetNotes_test.log for details"
@@ -58,6 +83,20 @@ create_wms_test_database() {
   else
     echo "processPlanetNotes.sh not found at ${PROCESS_PLANET_SCRIPT}, using manual table creation"
     _create_basic_tables_manually
+  fi
+  
+  # Ensure countries table has geom column even if created manually
+  if psql -d "${TEST_DBNAME}" -c "SELECT 1 FROM information_schema.tables WHERE table_name = 'countries';" > /dev/null 2>&1; then
+    if ! psql -d "${TEST_DBNAME}" -c "SELECT 1 FROM information_schema.columns WHERE table_name = 'countries' AND column_name = 'geom';" > /dev/null 2>&1; then
+      echo "Adding geom column to countries table..."
+      psql -d "${TEST_DBNAME}" -c "ALTER TABLE countries ADD COLUMN geom GEOMETRY(MultiPolygon, 4326);" 2> /dev/null || true
+      # Populate with sample geometries
+      psql -d "${TEST_DBNAME}" -c "
+        UPDATE countries 
+        SET geom = ST_Multi(ST_MakeEnvelope(-180 + (country_id * 10), -90 + (country_id * 10), -170 + (country_id * 10), -80 + (country_id * 10), 4326))
+        WHERE geom IS NULL;
+      " 2> /dev/null || true
+    fi
   fi
 }
 
@@ -94,7 +133,15 @@ drop_wms_test_database() {
   if [[ "${MOCK_MODE:-0}" == "1" ]]; then
     echo "Mock dropdb called with: ${TEST_DBNAME}"
   else
-    dropdb "${TEST_DBNAME}" 2> /dev/null || true
+    # Don't drop the 'notes' database as it's a production database
+    # Only drop test databases (like osm_notes_wms_test)
+    if [[ "${TEST_DBNAME}" == "notes" ]]; then
+      echo "Skipping drop of production database 'notes'"
+    else
+      # For test databases, optionally drop them (commented out to preserve test data)
+      # dropdb "${TEST_DBNAME}" 2> /dev/null || true
+      echo "Preserving test database '${TEST_DBNAME}' (uncomment dropdb to remove)"
+    fi
   fi
 }
 
