@@ -88,13 +88,64 @@ serve OSM notes as WMS layers.
 - PostgreSQL with PostGIS extension
 - WMS components installed in database
 - curl and jq installed
+- **GeoServer user with ADMIN role** (see GeoServer Permissions below)
 - **Database user `geoserver` with read-only permissions** (see Database Permissions below)
+
+**GeoServer Permissions:**
+
+The user specified in `GEOSERVER_USER` must have **ADMIN role** in GeoServer to
+perform the following operations via REST API:
+
+**Required Operations:**
+- **Workspaces**: Create, read, update, delete
+- **Namespaces**: Create, read, update, delete
+- **Datastores**: Create, read, update, delete
+- **Feature Types**: Create, read, update, delete
+- **Layers**: Create, read, update, delete, assign styles
+- **Styles**: Create, read, update, delete (global resources)
+
+**GeoServer Roles:**
+- **ADMIN**: Full access to all operations (required for this script)
+- **ADMIN_WORKSPACE**: Can manage specific workspace only (not sufficient)
+- **ADMIN_DATA**: Can manage data stores and layers (not sufficient for workspaces/namespaces)
+- **ADMIN_STYLE**: Can manage styles only (not sufficient)
+
+**Default Credentials:**
+- Default GeoServer admin user: `admin` / `geoserver`
+- **Important**: Change default credentials in production!
+
+**Configuring GeoServer User:**
+1. Access GeoServer web interface: `http://localhost:8080/geoserver/web`
+2. Navigate to: Security → Users, Groups, Roles
+3. Verify user has ADMIN role assigned
+4. Or create new admin user:
+   - Security → Users, Groups, Roles → Users/Groups → Add new user
+   - Assign role: `ADMIN`
+   - Update `GEOSERVER_USER` and `GEOSERVER_PASSWORD` in `etc/wms.properties.sh`
+
+**Database Configuration:**
+
+**IMPORTANT**: `geoserverConfig.sh` requires database credentials (user and password)
+because GeoServer connects to PostgreSQL via TCP/IP and cannot use peer authentication.
+
+**Required Configuration in `etc/wms.properties.sh`:**
+```bash
+# Database user for GeoServer (read-only permissions)
+WMS_DBUSER="geoserver"  # or use GEOSERVER_DBUSER
+WMS_DBPASSWORD="your_password_here"  # REQUIRED - GeoServer needs password
+WMS_DBHOST="localhost"  # or remote host if GeoServer is on different server
+WMS_DBPORT="5432"  # PostgreSQL port
+```
+
+**Note**: Unlike `wmsManager.sh` which can use peer authentication, `geoserverConfig.sh`
+always requires a password because it configures GeoServer's datastore, and GeoServer
+runs as a Java process that cannot use peer authentication.
 
 **Database Permissions:**
 
 Before running `geoserverConfig.sh`, you must grant read-only permissions to the
-`geoserver` user. This user is used by GeoServer to access WMS data with read-only
-privileges (principle of least privilege):
+`geoserver` database user. This user is used by GeoServer to access WMS data with
+read-only privileges (principle of least privilege):
 
 ```bash
 # Execute as database owner (angoca) or postgres superuser
@@ -102,15 +153,16 @@ psql -d notes -f sql/wms/grantGeoserverPermissions.sql
 ```
 
 This script will:
-- Create the `geoserver` user if it doesn't exist
+- Create the `geoserver` database user if it doesn't exist
 - Grant CONNECT privilege on the `notes` database
 - Grant USAGE on `public` and `wms` schemas
 - Grant SELECT (read-only) on all tables in the `wms` schema
 - Grant SELECT on the `countries` table
 - Set default privileges for future tables in the `wms` schema
 
-**Security Note:** The `geoserver` user has read-only permissions only, which
-is appropriate for WMS data access.
+**Security Note:** The `geoserver` database user has read-only permissions only,
+which is appropriate for WMS data access. The GeoServer admin user (different
+from the database user) needs ADMIN role to configure GeoServer itself.
 
 **Usage:**
 

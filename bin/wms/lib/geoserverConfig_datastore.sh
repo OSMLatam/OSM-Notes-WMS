@@ -17,6 +17,15 @@ create_datastore() {
 
  # Note: We specify 'public' as default schema since views are created there
  # SQL views can still access other schemas (like 'wms') using fully qualified names
+ # IMPORTANT: GeoServer requires database user and password (cannot use peer authentication)
+ # These credentials are stored in GeoServer's datastore configuration
+ # The user should have read-only permissions (typically 'geoserver' user)
+ if [[ -z "${DBPASSWORD}" ]]; then
+  print_status "${YELLOW}" "⚠️  WARNING: DBPASSWORD is not set"
+  print_status "${YELLOW}" "   GeoServer datastore requires a password for database connection"
+  print_status "${YELLOW}" "   Set WMS_DBPASSWORD in etc/wms.properties.sh"
+  print_status "${YELLOW}" "   GeoServer will fail to connect without a password"
+ fi
  local DATASTORE_DATA="{
    \"dataStore\": {
      \"name\": \"${GEOSERVER_STORE}\",
