@@ -341,9 +341,9 @@ WITH
   valid_countries AS (
     SELECT
       c.country_id,
-      -- Use name column directly (it exists in this database)
-      -- For databases with country_name_en, this will need to be adjusted
-      c.name AS country_name_en,
+      -- Use country_name_en (preferred) or fallback to country_name (local language)
+      -- Based on actual schema: country_name_en VARCHAR(100), country_name VARCHAR(100) NOT NULL
+      COALESCE(c.country_name_en, c.country_name) AS country_name_en,
       CASE
         WHEN ST_SRID(c.geom) = 0 OR ST_SRID(c.geom) IS NULL THEN
           ST_SetSRID(c.geom, 4326)
