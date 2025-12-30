@@ -72,6 +72,7 @@ install_geoserver_config() {
  
  if [[ -n "${GEOSERVER_STYLES_DIR}" ]]; then
   local COPY_FAILED=false
+  local FILES_TO_COPY=()
   # Try to copy OpenNotes and ClosedNotes (the ones with colors)
   for STYLE_FILE in "${WMS_STYLE_OPEN_FILE}" "${WMS_STYLE_CLOSED_FILE}"; do
    local STYLE_BASENAME=$(basename "${STYLE_FILE}" .sld)
@@ -90,45 +91,70 @@ install_geoserver_config() {
      if [[ -n "${GEOSERVER_USER:-geoserver}" ]] && id "${GEOSERVER_USER}" &>/dev/null; then
       chown "${GEOSERVER_USER}:${GEOSERVER_USER}" "${TARGET_SLD}" 2>/dev/null || true
      fi
-     print_status "${GREEN}" "   ✅ ${STYLE_NAME}.sld copied directly (colors preserved)"
-     COPY_SUCCESS=true
+     # Verify that colors are preserved (check for SvgParameter with fill)
+     if grep -q 'SvgParameter.*fill' "${TARGET_SLD}" 2>/dev/null; then
+      print_status "${GREEN}" "   ✅ ${STYLE_NAME}.sld copied directly (colors preserved)"
+      COPY_SUCCESS=true
+     else
+      print_status "${YELLOW}" "   ⚠️  ${STYLE_NAME}.sld copied but colors missing - will need manual copy"
+      COPY_FAILED=true
+      FILES_TO_COPY+=("${STYLE_NAME}")
+     fi
     fi
    fi
    
-   # If copy failed and sudo is available, try with sudo
+   # If copy failed and sudo is available, try with sudo (non-interactive)
    if [[ "${COPY_SUCCESS}" == "false" ]] && command -v sudo >/dev/null 2>&1; then
-    # Try to copy with sudo (may require password or NOPASSWD)
-    if sudo cp "${STYLE_FILE}" "${TARGET_SLD}" 2>/dev/null; then
+    # Try to copy with sudo -n (non-interactive, fails if password required)
+    # This will only work if sudo is configured with NOPASSWD
+    if sudo -n cp "${STYLE_FILE}" "${TARGET_SLD}" 2>/dev/null; then
      if [[ -n "${GEOSERVER_USER:-geoserver}" ]] && id "${GEOSERVER_USER}" &>/dev/null; then
       sudo chown "${GEOSERVER_USER}:${GEOSERVER_USER}" "${TARGET_SLD}" 2>/dev/null || true
      fi
-     print_status "${GREEN}" "   ✅ ${STYLE_NAME}.sld copied directly with sudo (colors preserved)"
-     COPY_SUCCESS=true
+     # Verify that colors are preserved (check for SvgParameter with fill)
+     if grep -q 'SvgParameter.*fill' "${TARGET_SLD}" 2>/dev/null; then
+      print_status "${GREEN}" "   ✅ ${STYLE_NAME}.sld copied directly with sudo (colors preserved)"
+      COPY_SUCCESS=true
+     else
+      print_status "${YELLOW}" "   ⚠️  ${STYLE_NAME}.sld copied but colors missing - will need manual copy"
+      COPY_FAILED=true
+      FILES_TO_COPY+=("${STYLE_NAME}")
+     fi
+    else
+     # sudo -n failed (requires password) - mark for manual copy
+     COPY_FAILED=true
+     if [[ ! " ${FILES_TO_COPY[@]} " =~ " ${STYLE_NAME} " ]]; then
+      FILES_TO_COPY+=("${STYLE_NAME}")
+     fi
     fi
    fi
    
    # If still failed, mark for manual copy
    if [[ "${COPY_SUCCESS}" == "false" ]]; then
     COPY_FAILED=true
+    if [[ ! " ${FILES_TO_COPY[@]} " =~ " ${STYLE_NAME} " ]]; then
+     FILES_TO_COPY+=("${STYLE_NAME}")
+    fi
    fi
   done
   
-  if [[ "${COPY_FAILED}" == "true" ]]; then
+  # Always show copy commands if any file failed or if we need to verify colors
+  if [[ "${COPY_FAILED}" == "true" ]] || [[ ${#FILES_TO_COPY[@]} -gt 0 ]]; then
    print_status "${YELLOW}" ""
-   print_status "${YELLOW}" "   ⚠️  Cannot copy SLD files directly (permission denied or sudo requires password)"
-   print_status "${YELLOW}" "   GeoServer REST API transforms SLD 1.1.0 → 1.0.0 and loses colors"
-   print_status "${YELLOW}" "   Please copy manually to preserve colors:"
+   print_status "${YELLOW}" "   ⚠️  IMPORTANT: SLD files need to be copied manually to preserve colors"
+   print_status "${YELLOW}" "   GeoServer REST API transforms SLD 1.1.0 → 1.0.0 and loses SvgParameter (colors)"
+   print_status "${YELLOW}" "   Run these commands to copy SLD files and preserve colors:"
    print_status "${YELLOW}" ""
    print_status "${YELLOW}" "   sudo cp ${WMS_STYLE_OPEN_FILE} ${GEOSERVER_STYLES_DIR}/notesopen.sld"
    print_status "${YELLOW}" "   sudo cp ${WMS_STYLE_CLOSED_FILE} ${GEOSERVER_STYLES_DIR}/notesclosed.sld"
    if [[ -n "${GEOSERVER_USER:-geoserver}" ]]; then
     print_status "${YELLOW}" "   sudo chown ${GEOSERVER_USER}:${GEOSERVER_USER} ${GEOSERVER_STYLES_DIR}/notesopen.sld ${GEOSERVER_STYLES_DIR}/notesclosed.sld"
    fi
-   print_status "${YELLOW}" "   sudo systemctl restart geoserver  # or: sudo service geoserver restart"
+   print_status "${YELLOW}" "   sudo systemctl restart geoserver"
    print_status "${YELLOW}" ""
   else
    # All files copied successfully, suggest restart
-   print_status "${GREEN}" "   ✅ All SLD files copied successfully"
+   print_status "${GREEN}" "   ✅ All SLD files copied successfully with colors preserved"
    print_status "${YELLOW}" "   💡 Tip: Restart GeoServer to reload styles: sudo systemctl restart geoserver"
   fi
  fi
