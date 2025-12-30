@@ -149,80 +149,32 @@ upload_style() {
    print_status "${YELLOW}" "   - File too large"
    print_status "${YELLOW}" "   - Check GeoServer logs: tail -f /opt/geoserver/logs/geoserver.log"
   fi
-  # Always mark as uploaded=false when HTTP fails, but continue with installation
-  # User will complete style configuration manually via web interface
-  STYLE_UPLOADED=false
+  if [[ "${HTTP_CODE}" == "403" ]]; then
+   # Permission denied - return special code for manual intervention
+   STYLE_UPLOADED=false
+   rm -f "${TEMP_RESPONSE_FILE}" "${TEMP_CHECK_FILE}" 2> /dev/null || true
+   return 2
+  else
+   # Other errors - mark as not uploaded but continue
+   STYLE_UPLOADED=false
+  fi
  fi
 
  rm -f "${TEMP_RESPONSE_FILE}" "${TEMP_CHECK_FILE}" 2> /dev/null || true
 
- # After uploading via REST API, try to copy the SLD file directly to GeoServer styles directory
- # This ensures the SLD 1.1.0 format with SvgParameter elements is preserved
- # GeoServer REST API transforms SLD 1.1.0 to 1.0.0 and loses SvgParameter elements
- if [[ "${STYLE_UPLOADED}" == "true" ]]; then
-  local GEOSERVER_STYLES_DIR=""
-  # Try to determine GeoServer styles directory from GEOSERVER_DATA_DIR
-  if [[ -n "${GEOSERVER_DATA_DIR:-}" ]] && [[ -d "${GEOSERVER_DATA_DIR}/styles" ]]; then
-   GEOSERVER_STYLES_DIR="${GEOSERVER_DATA_DIR}/styles"
-  elif [[ -n "${GEOSERVER_HOME:-}" ]] && [[ -d "${GEOSERVER_HOME}/data/geoserver/styles" ]]; then
-   GEOSERVER_STYLES_DIR="${GEOSERVER_HOME}/data/geoserver/styles"
-  elif [[ -d "/home/geoserver/data/geoserver/styles" ]]; then
-   GEOSERVER_STYLES_DIR="/home/geoserver/data/geoserver/styles"
-  fi
-
-  if [[ -n "${GEOSERVER_STYLES_DIR}" ]]; then
-   local TARGET_SLD="${GEOSERVER_STYLES_DIR}/${ACTUAL_STYLE_NAME}.sld"
-   local COPY_SUCCESS=false
-   
-   # Try to copy the SLD file directly to preserve SLD 1.1.0 format and colors
-   # GeoServer REST API transforms SLD 1.1.0 to 1.0.0 and loses SvgParameter elements
-   if [[ -w "${GEOSERVER_STYLES_DIR}" ]]; then
-    # User has write permissions, copy directly
-    if cp "${SLD_FILE}" "${TARGET_SLD}" 2>/dev/null; then
-     # Try to set correct ownership if we can determine it
-     if [[ -n "${GEOSERVER_USER:-geoserver}" ]] && id "${GEOSERVER_USER}" &>/dev/null; then
-      chown "${GEOSERVER_USER}:${GEOSERVER_USER}" "${TARGET_SLD}" 2>/dev/null || true
-     fi
-     COPY_SUCCESS=true
-     print_status "${GREEN}" "   ✅ SLD file copied directly to preserve colors (${ACTUAL_STYLE_NAME}.sld)"
-    fi
-   elif command -v sudo >/dev/null 2>&1; then
-    # Try with sudo if available
-    if sudo cp "${SLD_FILE}" "${TARGET_SLD}" 2>/dev/null; then
-     if [[ -n "${GEOSERVER_USER:-geoserver}" ]] && id "${GEOSERVER_USER}" &>/dev/null; then
-      sudo chown "${GEOSERVER_USER}:${GEOSERVER_USER}" "${TARGET_SLD}" 2>/dev/null || true
-     fi
-     COPY_SUCCESS=true
-     print_status "${GREEN}" "   ✅ SLD file copied directly (with sudo) to preserve colors (${ACTUAL_STYLE_NAME}.sld)"
-    fi
-   fi
-   
-   if [[ "${COPY_SUCCESS}" == "false" ]]; then
-    # Could not copy - show warning with instructions
-    # This is important because GeoServer REST API transforms SLD 1.1.0 to 1.0.0
-    # and loses SvgParameter elements (colors), making the map appear gray
-    print_status "${YELLOW}" ""
-    print_status "${YELLOW}" "   ⚠️  IMPORTANT: Cannot copy SLD file directly to preserve colors"
-    print_status "${YELLOW}" "      GeoServer REST API transforms SLD 1.1.0 → 1.0.0 and loses SvgParameter (colors)"
-    print_status "${YELLOW}" "      The map will appear GRAY until you copy the SLD files manually:"
-    print_status "${YELLOW}" ""
-    print_status "${YELLOW}" "      sudo cp ${SLD_FILE} ${TARGET_SLD}"
-    if [[ -n "${GEOSERVER_USER:-geoserver}" ]]; then
-     print_status "${YELLOW}" "      sudo chown ${GEOSERVER_USER}:${GEOSERVER_USER} ${TARGET_SLD}"
-    fi
-    print_status "${YELLOW}" ""
-    print_status "${YELLOW}" "      Or configure sudo NOPASSWD for this directory to automate this step"
-    print_status "${YELLOW}" ""
-   fi
-  fi
- fi
-
+ # Return appropriate exit code
  if [[ "${STYLE_UPLOADED}" == "true" ]]; then
   return 0
  else
-  return 1
+  # Return 2 for permission errors (403), 1 for other errors
+  if [[ "${HTTP_CODE:-}" == "403" ]]; then
+   return 2
+  else
+   return 1
+  fi
  fi
 }
+
 # Function to remove a style
 remove_style() {
  local STYLE_NAME="${1}"

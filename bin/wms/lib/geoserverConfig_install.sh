@@ -43,17 +43,40 @@ install_geoserver_config() {
  print_status "${BLUE}" "🎨 Attempting to upload styles via REST API..."
  print_status "${YELLOW}" "   Note: If upload fails (403 Forbidden), styles must be created manually via web interface"
  local STYLE_ERRORS=0
+ local MANUAL_STYLES_NEEDED=false
+ local STYLES_NEEDING_MANUAL=()
+ 
  if ! upload_style "${WMS_STYLE_OPEN_FILE}" "${WMS_STYLE_OPEN_NAME}"; then
+  local UPLOAD_EXIT_CODE=$?
   ((STYLE_ERRORS++))
+  if [[ ${UPLOAD_EXIT_CODE} -eq 2 ]]; then
+   MANUAL_STYLES_NEEDED=true
+   STYLES_NEEDING_MANUAL+=("notesopen:${WMS_STYLE_OPEN_FILE}")
+  fi
  fi
  if ! upload_style "${WMS_STYLE_CLOSED_FILE}" "${WMS_STYLE_CLOSED_NAME}"; then
+  local UPLOAD_EXIT_CODE=$?
   ((STYLE_ERRORS++))
+  if [[ ${UPLOAD_EXIT_CODE} -eq 2 ]]; then
+   MANUAL_STYLES_NEEDED=true
+   STYLES_NEEDING_MANUAL+=("notesclosed:${WMS_STYLE_CLOSED_FILE}")
+  fi
  fi
  if ! upload_style "${WMS_STYLE_COUNTRIES_FILE}" "${WMS_STYLE_COUNTRIES_NAME}"; then
+  local UPLOAD_EXIT_CODE=$?
   ((STYLE_ERRORS++))
+  if [[ ${UPLOAD_EXIT_CODE} -eq 2 ]]; then
+   MANUAL_STYLES_NEEDED=true
+   STYLES_NEEDING_MANUAL+=("countries:${WMS_STYLE_COUNTRIES_FILE}")
+  fi
  fi
  if ! upload_style "${WMS_STYLE_DISPUTED_FILE}" "${WMS_STYLE_DISPUTED_NAME}"; then
+  local UPLOAD_EXIT_CODE=$?
   ((STYLE_ERRORS++))
+  if [[ ${UPLOAD_EXIT_CODE} -eq 2 ]]; then
+   MANUAL_STYLES_NEEDED=true
+   STYLES_NEEDING_MANUAL+=("disputed_and_unclaimed_areas:${WMS_STYLE_DISPUTED_FILE}")
+  fi
  fi
  
  # IMPORTANT: After uploading styles via REST API, copy SLD files directly to preserve colors
@@ -128,7 +151,14 @@ install_geoserver_config() {
     else
      # sudo -n failed (requires password) - mark for manual copy
      COPY_FAILED=true
-     if [[ ! " ${FILES_TO_COPY[@]} " =~ " ${STYLE_NAME} " ]]; then
+     local FOUND=false
+     for EXISTING in "${FILES_TO_COPY[@]}"; do
+      if [[ "${EXISTING}" == "${STYLE_NAME}" ]]; then
+       FOUND=true
+       break
+      fi
+     done
+     if [[ "${FOUND}" == "false" ]]; then
       FILES_TO_COPY+=("${STYLE_NAME}")
      fi
     fi
@@ -137,7 +167,14 @@ install_geoserver_config() {
    # If still failed, mark for manual copy
    if [[ "${COPY_SUCCESS}" == "false" ]]; then
     COPY_FAILED=true
-    if [[ ! " ${FILES_TO_COPY[@]} " =~ " ${STYLE_NAME} " ]]; then
+    local FOUND=false
+    for EXISTING in "${FILES_TO_COPY[@]}"; do
+     if [[ "${EXISTING}" == "${STYLE_NAME}" ]]; then
+      FOUND=true
+      break
+     fi
+    done
+    if [[ "${FOUND}" == "false" ]]; then
      FILES_TO_COPY+=("${STYLE_NAME}")
     fi
    fi
@@ -249,41 +286,49 @@ install_geoserver_config() {
  print_status "${GREEN}" "✅ GeoServer configuration completed successfully"
  show_configuration_summary
 
- # Show manual style configuration instructions
- print_status "${YELLOW}" ""
- print_status "${YELLOW}" "⚠️  IMPORTANT: Style configuration must be completed manually"
- print_status "${YELLOW}" "   The GeoServer REST API cannot create styles due to permission restrictions."
- print_status "${YELLOW}" "   You must complete the style configuration through the GeoServer web interface:"
- print_status "${YELLOW}" ""
- print_status "${YELLOW}" "   1. Open GeoServer web interface:"
- print_status "${YELLOW}" "      ${GEOSERVER_URL}/web"
- print_status "${YELLOW}" ""
- print_status "${YELLOW}" "   2. Navigate to Styles → Add a new style"
- print_status "${YELLOW}" ""
- print_status "${YELLOW}" "   3. Upload the following SLD files:"
- print_status "${YELLOW}" "      - Style name: notesopen"
- print_status "${YELLOW}" "        File: ${WMS_STYLE_OPEN_FILE}"
- print_status "${YELLOW}" "      - Style name: notesclosed"
- print_status "${YELLOW}" "        File: ${WMS_STYLE_CLOSED_FILE}"
- print_status "${YELLOW}" "      - Style name: countries"
- print_status "${YELLOW}" "        File: ${WMS_STYLE_COUNTRIES_FILE}"
- print_status "${YELLOW}" "      - Style name: disputed_and_unclaimed_areas"
- print_status "${YELLOW}" "        File: ${WMS_STYLE_DISPUTED_FILE}"
- print_status "${YELLOW}" ""
- print_status "${YELLOW}" "   4. Assign styles to layers:"
- print_status "${YELLOW}" "      - Navigate to Layers → osm_notes:notesopen"
- print_status "${YELLOW}" "        Set Default Style to: notesopen"
- print_status "${YELLOW}" "      - Navigate to Layers → osm_notes:notesclosed"
- print_status "${YELLOW}" "        Set Default Style to: notesclosed"
- print_status "${YELLOW}" "      - Navigate to Layers → osm_notes:countries"
- print_status "${YELLOW}" "        Set Default Style to: countries"
- print_status "${YELLOW}" "      - Navigate to Layers → osm_notes:disputedareas"
- print_status "${YELLOW}" "        Set Default Style to: disputed_and_unclaimed_areas"
- print_status "${YELLOW}" ""
- print_status "${YELLOW}" "   5. After assigning styles, restart GeoServer:"
- print_status "${YELLOW}" "      sudo systemctl restart geoserver"
- print_status "${YELLOW}" ""
+ # Show manual style configuration instructions only if styles failed to upload
+ if [[ "${MANUAL_STYLES_NEEDED}" == "true" ]] || [[ ${STYLE_ERRORS} -gt 0 ]]; then
+  print_status "${YELLOW}" ""
+  print_status "${YELLOW}" "⚠️  IMPORTANT: Style configuration must be completed manually"
+  if [[ "${MANUAL_STYLES_NEEDED}" == "true" ]]; then
+   print_status "${YELLOW}" "   The GeoServer REST API cannot create styles due to permission restrictions (403 Forbidden)."
+   print_status "${YELLOW}" "   The GeoServer user does not have ADMIN permissions to create styles via REST API."
+  else
+   print_status "${YELLOW}" "   Some styles failed to upload via REST API."
+  fi
+  print_status "${YELLOW}" "   You must complete the style configuration through the GeoServer web interface:"
+  print_status "${YELLOW}" ""
+  print_status "${YELLOW}" "   1. Open GeoServer web interface:"
+  print_status "${YELLOW}" "      ${GEOSERVER_URL}/web"
+  print_status "${YELLOW}" ""
+  print_status "${YELLOW}" "   2. Navigate to Styles → Add a new style"
+  print_status "${YELLOW}" ""
+  print_status "${YELLOW}" "   3. Upload the following SLD files:"
+  print_status "${YELLOW}" "      - Style name: notesopen"
+  print_status "${YELLOW}" "        File: ${WMS_STYLE_OPEN_FILE}"
+  print_status "${YELLOW}" "      - Style name: notesclosed"
+  print_status "${YELLOW}" "        File: ${WMS_STYLE_CLOSED_FILE}"
+  print_status "${YELLOW}" "      - Style name: countries"
+  print_status "${YELLOW}" "        File: ${WMS_STYLE_COUNTRIES_FILE}"
+  print_status "${YELLOW}" "      - Style name: disputed_and_unclaimed_areas"
+  print_status "${YELLOW}" "        File: ${WMS_STYLE_DISPUTED_FILE}"
+  print_status "${YELLOW}" ""
+  print_status "${YELLOW}" "   4. Assign styles to layers:"
+  print_status "${YELLOW}" "      - Navigate to Layers → osm_notes:notesopen"
+  print_status "${YELLOW}" "        Set Default Style to: notesopen"
+  print_status "${YELLOW}" "      - Navigate to Layers → osm_notes:notesclosed"
+  print_status "${YELLOW}" "        Set Default Style to: notesclosed"
+  print_status "${YELLOW}" "      - Navigate to Layers → osm_notes:countries"
+  print_status "${YELLOW}" "        Set Default Style to: countries"
+  print_status "${YELLOW}" "      - Navigate to Layers → osm_notes:disputedareas"
+  print_status "${YELLOW}" "        Set Default Style to: disputed_and_unclaimed_areas"
+  print_status "${YELLOW}" ""
+  print_status "${YELLOW}" "   5. After assigning styles, restart GeoServer:"
+  print_status "${YELLOW}" "      sudo systemctl restart geoserver"
+  print_status "${YELLOW}" ""
+ fi
 }
+
 # Function to show configuration summary
 show_configuration_summary() {
  print_status "${BLUE}" "📋 Configuration Summary:"
