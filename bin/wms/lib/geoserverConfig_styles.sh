@@ -3,7 +3,7 @@
 # Functions for managing GeoServer styles (SLD)
 #
 # Author: Andres Gomez (AngocA)
-# Version: 2025-12-08
+# Version: 2025-12-29
 # Function to extract style name from SLD file
 extract_style_name_from_sld() {
  local SLD_FILE="${1}"
@@ -60,13 +60,17 @@ upload_style() {
  local RESPONSE_BODY
 
  # If style exists, delete it first to avoid corruption issues, then create it
+ # This is important because GeoServer may cache a corrupted version of the style
  if [[ "${CHECK_HTTP_CODE}" == "200" ]]; then
   # Style exists, delete it first to avoid corruption issues
   print_status "${BLUE}" "   Removing existing style '${ACTUAL_STYLE_NAME}' before recreating..."
-  curl -s -w "%{http_code}" -o /dev/null \
+  local DELETE_CODE
+  DELETE_CODE=$(curl -s -w "%{http_code}" -o /dev/null \
    -u "${GEOSERVER_USER}:${GEOSERVER_PASSWORD}" \
-   -X DELETE "${STYLE_CHECK_URL}" 2> /dev/null | tail -1 > /dev/null
-  sleep 1 # Wait a moment for GeoServer to process the deletion
+   -X DELETE "${STYLE_CHECK_URL}" 2> /dev/null | tail -1)
+  if [[ "${DELETE_CODE}" == "200" ]] || [[ "${DELETE_CODE}" == "204" ]]; then
+   sleep 2 # Wait a moment for GeoServer to process the deletion and clear cache
+  fi
  fi
  # Create the style (either new or after deletion)
  if true; then

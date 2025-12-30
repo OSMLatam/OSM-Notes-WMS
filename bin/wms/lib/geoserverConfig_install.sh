@@ -3,7 +3,7 @@
 # Functions for installing GeoServer configuration
 #
 # Author: Andres Gomez (AngocA)
-# Version: 2025-12-08
+# Version: 2025-12-29
 # Function to install GeoServer configuration
 install_geoserver_config() {
  print_status "${BLUE}" "🚀 Installing GeoServer configuration..."
@@ -71,7 +71,7 @@ install_geoserver_config() {
  fi
  
  if [[ -n "${GEOSERVER_STYLES_DIR}" ]]; then
-  local NEEDS_MANUAL_COPY=false
+  local COPY_FAILED=false
   # Try to copy OpenNotes and ClosedNotes (the ones with colors)
   for STYLE_FILE in "${WMS_STYLE_OPEN_FILE}" "${WMS_STYLE_CLOSED_FILE}"; do
    local STYLE_BASENAME=$(basename "${STYLE_FILE}" .sld)
@@ -82,45 +82,54 @@ install_geoserver_config() {
     *) continue ;;
    esac
    local TARGET_SLD="${GEOSERVER_STYLES_DIR}/${STYLE_NAME}.sld"
+   local COPY_SUCCESS=false
    
+   # First try without sudo (if we have write permissions)
    if [[ -w "${GEOSERVER_STYLES_DIR}" ]]; then
     if cp "${STYLE_FILE}" "${TARGET_SLD}" 2>/dev/null; then
      if [[ -n "${GEOSERVER_USER:-geoserver}" ]] && id "${GEOSERVER_USER}" &>/dev/null; then
       chown "${GEOSERVER_USER}:${GEOSERVER_USER}" "${TARGET_SLD}" 2>/dev/null || true
      fi
      print_status "${GREEN}" "   ✅ ${STYLE_NAME}.sld copied directly (colors preserved)"
-    else
-     NEEDS_MANUAL_COPY=true
+     COPY_SUCCESS=true
     fi
-   else
-    NEEDS_MANUAL_COPY=true
+   fi
+   
+   # If copy failed and sudo is available, try with sudo
+   if [[ "${COPY_SUCCESS}" == "false" ]] && command -v sudo >/dev/null 2>&1; then
+    # Try to copy with sudo (may require password or NOPASSWD)
+    if sudo cp "${STYLE_FILE}" "${TARGET_SLD}" 2>/dev/null; then
+     if [[ -n "${GEOSERVER_USER:-geoserver}" ]] && id "${GEOSERVER_USER}" &>/dev/null; then
+      sudo chown "${GEOSERVER_USER}:${GEOSERVER_USER}" "${TARGET_SLD}" 2>/dev/null || true
+     fi
+     print_status "${GREEN}" "   ✅ ${STYLE_NAME}.sld copied directly with sudo (colors preserved)"
+     COPY_SUCCESS=true
+    fi
+   fi
+   
+   # If still failed, mark for manual copy
+   if [[ "${COPY_SUCCESS}" == "false" ]]; then
+    COPY_FAILED=true
    fi
   done
   
-  if [[ "${NEEDS_MANUAL_COPY}" == "true" ]]; then
+  if [[ "${COPY_FAILED}" == "true" ]]; then
    print_status "${YELLOW}" ""
-   print_status "${YELLOW}" "   ⚠️  Cannot copy SLD files directly (permission denied)"
+   print_status "${YELLOW}" "   ⚠️  Cannot copy SLD files directly (permission denied or sudo requires password)"
    print_status "${YELLOW}" "   GeoServer REST API transforms SLD 1.1.0 → 1.0.0 and loses colors"
-   print_status "${YELLOW}" "   The map will appear GRAY until you run:"
+   print_status "${YELLOW}" "   Please copy manually to preserve colors:"
    print_status "${YELLOW}" ""
    print_status "${YELLOW}" "   sudo cp ${WMS_STYLE_OPEN_FILE} ${GEOSERVER_STYLES_DIR}/notesopen.sld"
    print_status "${YELLOW}" "   sudo cp ${WMS_STYLE_CLOSED_FILE} ${GEOSERVER_STYLES_DIR}/notesclosed.sld"
    if [[ -n "${GEOSERVER_USER:-geoserver}" ]]; then
     print_status "${YELLOW}" "   sudo chown ${GEOSERVER_USER}:${GEOSERVER_USER} ${GEOSERVER_STYLES_DIR}/notesopen.sld ${GEOSERVER_STYLES_DIR}/notesclosed.sld"
    fi
-   print_status "${YELLOW}" "   # Restart GeoServer to reload styles:"
-   local RESTART_CMD=""
-   if [[ -f "/home/geoserver/binaries/bin/shutdown.sh" ]] && [[ -f "/home/geoserver/binaries/bin/startup.sh" ]]; then
-    RESTART_CMD="/home/geoserver/binaries/bin/shutdown.sh && /home/geoserver/binaries/bin/startup.sh"
-   elif [[ -n "${GEOSERVER_HOME:-}" ]] && [[ -f "${GEOSERVER_HOME}/bin/shutdown.sh" ]] && [[ -f "${GEOSERVER_HOME}/bin/startup.sh" ]]; then
-    RESTART_CMD="${GEOSERVER_HOME}/bin/shutdown.sh && ${GEOSERVER_HOME}/bin/startup.sh"
-   fi
-   if [[ -n "${RESTART_CMD}" ]]; then
-    print_status "${YELLOW}" "   sudo ${RESTART_CMD}"
-   else
-    print_status "${YELLOW}" "   # Find GeoServer process and restart manually"
-   fi
+   print_status "${YELLOW}" "   sudo systemctl restart geoserver  # or: sudo service geoserver restart"
    print_status "${YELLOW}" ""
+  else
+   # All files copied successfully, suggest restart
+   print_status "${GREEN}" "   ✅ All SLD files copied successfully"
+   print_status "${YELLOW}" "   💡 Tip: Restart GeoServer to reload styles: sudo systemctl restart geoserver"
   fi
  fi
  
