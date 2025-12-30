@@ -37,10 +37,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>-1</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:PropertyIsEqualTo>
-                <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                <ogc:Literal>0</ogc:Literal>
-              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>0</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -71,10 +77,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>0</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:PropertyIsEqualTo>
-                <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                <ogc:Literal>0</ogc:Literal>
-              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>0</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -105,10 +117,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>1</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:PropertyIsEqualTo>
-                <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                <ogc:Literal>0</ogc:Literal>
-              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>0</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -139,10 +157,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>2</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:PropertyIsEqualTo>
-                <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                <ogc:Literal>0</ogc:Literal>
-              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>0</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -173,10 +197,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>3</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:PropertyIsEqualTo>
-                <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                <ogc:Literal>0</ogc:Literal>
-              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>0</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -207,10 +237,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>4</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:PropertyIsEqualTo>
-                <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                <ogc:Literal>0</ogc:Literal>
-              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>0</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -241,10 +277,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>5</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:PropertyIsEqualTo>
-                <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                <ogc:Literal>0</ogc:Literal>
-              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>0</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -276,16 +318,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>-1</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>1</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>2</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -316,16 +358,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>0</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>1</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>2</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -356,16 +398,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>1</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>1</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>2</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -396,16 +438,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>2</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>1</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>2</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -436,16 +478,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>3</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>1</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>2</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -476,16 +518,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>4</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>1</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>2</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -516,16 +558,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>5</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>1</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>2</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -557,16 +599,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>-1</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>3</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>4</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -597,16 +639,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>0</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>3</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>4</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -637,16 +679,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>1</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>3</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>4</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -677,16 +719,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>2</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>3</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>4</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -717,16 +759,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>3</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>3</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>4</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -757,16 +799,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>4</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>3</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>4</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -797,16 +839,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>5</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>3</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>4</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -838,16 +880,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>-1</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>5</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>6</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -878,16 +920,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>0</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>5</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>6</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -918,16 +960,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>1</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>5</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>6</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -958,16 +1000,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>2</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>5</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>6</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -998,16 +1040,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>3</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>5</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>6</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -1038,16 +1080,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>4</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>5</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>6</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -1078,16 +1120,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>5</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>5</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>6</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -1119,16 +1161,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>-1</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>7</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>8</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>9</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -1159,16 +1201,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>0</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>7</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>8</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>9</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -1199,16 +1241,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>1</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>7</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>8</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>9</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -1239,16 +1281,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>2</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>7</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>8</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>9</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -1279,16 +1321,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>3</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>7</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>8</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>9</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -1319,16 +1361,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>4</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>7</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>8</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>9</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
@@ -1359,16 +1401,16 @@ Version: 2025-12-30
                 <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
                 <ogc:Literal>5</ogc:Literal>
               </ogc:PropertyIsEqualTo>
-              <ogc:Or>
-                <ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
                   <ogc:Literal>7</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
                   <ogc:PropertyName>years_since_closed</ogc:PropertyName>
-                  <ogc:Literal>8</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-              </ogc:Or>
+                  <ogc:Literal>9</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
             </ogc:And>
           </ogc:Filter>
           <se:PointSymbolizer>
