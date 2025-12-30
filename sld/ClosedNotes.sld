@@ -33,10 +33,12 @@ Version: 2025-12-07
                 <se:WellKnownName>circle</se:WellKnownName>
                 <se:Fill>
                   <se:SvgParameter name="fill">#00FF00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">1.0</se:SvgParameter>
                 </se:Fill>
                 <se:Stroke>
                   <se:SvgParameter name="stroke">#000000</se:SvgParameter>
                   <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">1.0</se:SvgParameter>
                 </se:Stroke>
               </se:Mark>
               <se:Size>12</se:Size>
@@ -59,10 +61,12 @@ Version: 2025-12-07
                 <se:WellKnownName>triangle</se:WellKnownName>
                 <se:Fill>
                   <se:SvgParameter name="fill">#00FF00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">1.0</se:SvgParameter>
                 </se:Fill>
                 <se:Stroke>
                   <se:SvgParameter name="stroke">#000000</se:SvgParameter>
                   <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">1.0</se:SvgParameter>
                 </se:Stroke>
               </se:Mark>
               <se:Size>14</se:Size>
@@ -196,6 +200,31 @@ Version: 2025-12-07
                 </se:Stroke>
               </se:Mark>
               <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        
+        <!-- Default rule for NULL country_shape_mod (no country assigned) -->
+        <se:Rule>
+          <se:Name>Default - Gray Circle (No Country)</se:Name>
+          <ogc:Filter>
+            <ogc:PropertyIsNull>
+              <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+            </ogc:PropertyIsNull>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>circle</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#888888</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>12</se:Size>
             </se:Graphic>
           </se:PointSymbolizer>
         </se:Rule>

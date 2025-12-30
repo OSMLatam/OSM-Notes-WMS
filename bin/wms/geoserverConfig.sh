@@ -52,6 +52,35 @@ if [[ -f "${PROJECT_ROOT}/bin/lib/functionsProcess.sh" ]]; then
  source "${PROJECT_ROOT}/bin/lib/functionsProcess.sh"
 fi
 
+# Load validation functions if not already loaded
+# This provides __validate_input_file function
+if ! declare -f __validate_input_file > /dev/null; then
+ if [[ -f "${PROJECT_ROOT}/lib/osm-common/validationFunctions.sh" ]]; then
+  source "${PROJECT_ROOT}/lib/osm-common/validationFunctions.sh"
+ elif [[ -f "${PROJECT_ROOT}/lib/osm-common/consolidatedValidationFunctions.sh" ]]; then
+  source "${PROJECT_ROOT}/lib/osm-common/consolidatedValidationFunctions.sh"
+ else
+  # Fallback: simple validation function if libraries are not available
+  __validate_input_file() {
+   local FILE_PATH="${1}"
+   local DESCRIPTION="${2:-File}"
+   if [[ -z "${FILE_PATH}" ]]; then
+    print_status "${RED}" "❌ ERROR: ${DESCRIPTION} path is empty"
+    return 1
+   fi
+   if [[ ! -f "${FILE_PATH}" ]]; then
+    print_status "${RED}" "❌ ERROR: ${DESCRIPTION} not found: ${FILE_PATH}"
+    return 1
+   fi
+   if [[ ! -r "${FILE_PATH}" ]]; then
+    print_status "${RED}" "❌ ERROR: ${DESCRIPTION} is not readable: ${FILE_PATH}"
+    return 1
+   fi
+   return 0
+  }
+ fi
+fi
+
 # Load modularized GeoServer configuration functions
 LIB_DIR="${SCRIPT_DIR}/lib"
 if [[ -d "${LIB_DIR}" ]]; then

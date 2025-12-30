@@ -72,11 +72,13 @@ upload_style() {
  if true; then
   # Style doesn't exist, create it (use the name from SLD, not the parameter)
   # GeoServer will extract the name from the SLD file itself
+  # Use --data-binary to ensure the entire file is read correctly
+  # Use application/vnd.ogc.se+xml to preserve SLD 1.1.0 format and SvgParameter elements
   HTTP_CODE=$(curl -s -w "%{http_code}" -o "${TEMP_RESPONSE_FILE}" \
    -X POST \
-   -H "Content-Type: application/vnd.ogc.sld+xml" \
+   -H "Content-Type: application/vnd.ogc.se+xml" \
    -u "${GEOSERVER_USER}:${GEOSERVER_PASSWORD}" \
-   -d "@${SLD_FILE}" \
+   --data-binary "@${SLD_FILE}" \
    "${GEOSERVER_URL}/rest/styles?name=${ACTUAL_STYLE_NAME}" 2> /dev/null | tail -1)
  fi
 
@@ -94,11 +96,13 @@ upload_style() {
   # 403 or 409 means style already exists - try to update it
   if [[ "${CHECK_HTTP_CODE}" != "200" ]]; then
    # Style exists but we couldn't find it by name, try updating with actual name
+   # Use --data-binary to ensure the entire file is read correctly
+   # Use application/vnd.ogc.se+xml to preserve SLD 1.1.0 format and SvgParameter elements
    HTTP_CODE=$(curl -s -w "%{http_code}" -o "${TEMP_RESPONSE_FILE}" \
     -X PUT \
-    -H "Content-Type: application/vnd.ogc.sld+xml" \
+    -H "Content-Type: application/vnd.ogc.se+xml" \
     -u "${GEOSERVER_USER}:${GEOSERVER_PASSWORD}" \
-    -d "@${SLD_FILE}" \
+    --data-binary "@${SLD_FILE}" \
     "${GEOSERVER_URL}/rest/styles/${ACTUAL_STYLE_NAME}" 2> /dev/null | tail -1)
    RESPONSE_BODY=$(cat "${TEMP_RESPONSE_FILE}" 2> /dev/null || echo "")
    if [[ "${HTTP_CODE}" == "200" ]]; then
@@ -134,6 +138,60 @@ upload_style() {
  fi
 
  rm -f "${TEMP_RESPONSE_FILE}" "${TEMP_CHECK_FILE}" 2> /dev/null || true
+
+ # After uploading via REST API, try to copy the SLD file directly to GeoServer styles directory
+ # This ensures the SLD 1.1.0 format with SvgParameter elements is preserved
+ # GeoServer REST API transforms SLD 1.1.0 to 1.0.0 and loses SvgParameter elements
+ if [[ "${STYLE_UPLOADED}" == "true" ]]; then
+  local GEOSERVER_STYLES_DIR=""
+  # Try to determine GeoServer styles directory from GEOSERVER_DATA_DIR
+  if [[ -n "${GEOSERVER_DATA_DIR:-}" ]] && [[ -d "${GEOSERVER_DATA_DIR}/styles" ]]; then
+   GEOSERVER_STYLES_DIR="${GEOSERVER_DATA_DIR}/styles"
+  elif [[ -n "${GEOSERVER_HOME:-}" ]] && [[ -d "${GEOSERVER_HOME}/data/geoserver/styles" ]]; then
+   GEOSERVER_STYLES_DIR="${GEOSERVER_HOME}/data/geoserver/styles"
+  elif [[ -d "/home/geoserver/data/geoserver/styles" ]]; then
+   GEOSERVER_STYLES_DIR="/home/geoserver/data/geoserver/styles"
+  fi
+
+  if [[ -n "${GEOSERVER_STYLES_DIR}" ]]; then
+   local TARGET_SLD="${GEOSERVER_STYLES_DIR}/${ACTUAL_STYLE_NAME}.sld"
+   local COPY_SUCCESS=false
+   
+   # Try to copy the SLD file directly to preserve SLD 1.1.0 format and colors
+   # GeoServer REST API transforms SLD 1.1.0 to 1.0.0 and loses SvgParameter elements
+   if [[ -w "${GEOSERVER_STYLES_DIR}" ]]; then
+    # User has write permissions, copy directly
+    if cp "${SLD_FILE}" "${TARGET_SLD}" 2>/dev/null; then
+     # Try to set correct ownership if we can determine it
+     if [[ -n "${GEOSERVER_USER:-geoserver}" ]] && id "${GEOSERVER_USER}" &>/dev/null; then
+      chown "${GEOSERVER_USER}:${GEOSERVER_USER}" "${TARGET_SLD}" 2>/dev/null || true
+     fi
+     COPY_SUCCESS=true
+     print_status "${GREEN}" "   ✅ SLD file copied directly to preserve colors (${ACTUAL_STYLE_NAME}.sld)"
+    fi
+   elif command -v sudo >/dev/null 2>&1; then
+    # Try with sudo if available
+    if sudo cp "${SLD_FILE}" "${TARGET_SLD}" 2>/dev/null; then
+     if [[ -n "${GEOSERVER_USER:-geoserver}" ]] && id "${GEOSERVER_USER}" &>/dev/null; then
+      sudo chown "${GEOSERVER_USER}:${GEOSERVER_USER}" "${TARGET_SLD}" 2>/dev/null || true
+     fi
+     COPY_SUCCESS=true
+     print_status "${GREEN}" "   ✅ SLD file copied directly (with sudo) to preserve colors (${ACTUAL_STYLE_NAME}.sld)"
+    fi
+   fi
+   
+   if [[ "${COPY_SUCCESS}" == "false" ]]; then
+    # Could not copy - show warning with instructions
+    print_status "${YELLOW}" "   ⚠️  Cannot copy SLD file directly (permission denied)"
+    print_status "${YELLOW}" "      GeoServer REST API transforms SLD 1.1.0 → 1.0.0 and loses colors"
+    print_status "${YELLOW}" "      To preserve colors, copy manually:"
+    print_status "${YELLOW}" "         sudo cp ${SLD_FILE} ${TARGET_SLD}"
+    if [[ -n "${GEOSERVER_USER:-geoserver}" ]]; then
+     print_status "${YELLOW}" "         sudo chown ${GEOSERVER_USER}:${GEOSERVER_USER} ${TARGET_SLD}"
+    fi
+   fi
+  fi
+ fi
 
  if [[ "${STYLE_UPLOADED}" == "true" ]]; then
   return 0

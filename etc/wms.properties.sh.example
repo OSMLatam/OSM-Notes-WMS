@@ -12,17 +12,31 @@
 # =============================================================================
 
 # Database connection for WMS components
-# Note: wmsManager.sh uses the system user (notes) with elevated privileges for installation
-#       geoserverConfig.sh uses the geoserver user with read-only permissions
+# 
+# IMPORTANT: There are TWO different database users for different purposes:
+#
+# 1. WMS_DBUSER - Used by wmsManager.sh (installation/removal scripts)
+#    - Requires ELEVATED privileges (CREATE, ALTER, DROP, etc.)
+#    - Uses peer authentication (no password needed)
+#    - Default: empty (uses current system user, typically 'notes')
+#    - Leave empty for local installations with peer auth
+#
+# 2. GEOSERVER_DBUSER - Used by geoserverConfig.sh (GeoServer configuration)
+#    - Requires READ-ONLY permissions (SELECT only)
+#    - Requires password (GeoServer cannot use peer authentication)
+#    - Default: 'geoserver'
+#    - This user is configured in GeoServer's datastore
+#
 # For peer authentication (local connections), leave WMS_DBHOST and WMS_DBPORT empty
 WMS_DBNAME="${WMS_DBNAME:-notes}"
-WMS_DBUSER="${WMS_DBUSER:-}"  # Empty for wmsManager.sh (uses system user), set to 'geoserver' for geoserverConfig.sh
-WMS_DBPASSWORD="${WMS_DBPASSWORD:-}"  # Set your database password here
-WMS_DBHOST="${WMS_DBHOST:-}"  # Empty for local/peer connections
+WMS_DBUSER="${WMS_DBUSER:-}"  # Empty for wmsManager.sh (uses system user via peer auth)
+WMS_DBPASSWORD="${WMS_DBPASSWORD:-}"  # Required for geoserverConfig.sh, not needed for wmsManager.sh
+WMS_DBHOST="${WMS_DBHOST:-}"  # Empty for local/peer connections (wmsManager.sh), 'localhost' for geoserverConfig.sh
 WMS_DBPORT="${WMS_DBPORT:-}"  # Empty for default port with peer authentication
 
 # GeoServer-specific database user (read-only permissions)
 # This is used by geoserverConfig.sh to configure GeoServer datastores
+# GeoServer connects via TCP/IP and requires a password (cannot use peer auth)
 GEOSERVER_DBUSER="${GEOSERVER_DBUSER:-geoserver}"  # GeoServer user with read-only permissions
 
 # WMS Schema configuration
