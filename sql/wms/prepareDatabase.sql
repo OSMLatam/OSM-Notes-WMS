@@ -552,8 +552,8 @@ SELECT
   note_id,
   year_created_at,
   year_closed_at,
-  -- Calculate age dynamically (years since creation)
-  EXTRACT(YEAR FROM CURRENT_DATE) - year_created_at AS age_years,
+  -- Calculate age dynamically (years since creation) as INTEGER for SLD filtering
+  FLOOR(EXTRACT(YEAR FROM CURRENT_DATE) - year_created_at)::INTEGER AS age_years,
   -- Country information for country-based styling
   id_country,
   country_shape_mod,
@@ -576,8 +576,8 @@ SELECT
   note_id,
   year_created_at,
   year_closed_at,
-  -- Calculate age dynamically (years since closure)
-  EXTRACT(YEAR FROM CURRENT_DATE) - year_closed_at AS years_since_closed,
+  -- Calculate age dynamically (years since closure) as INTEGER for SLD filtering
+  FLOOR(EXTRACT(YEAR FROM CURRENT_DATE) - year_closed_at)::INTEGER AS years_since_closed,
   -- Country information for country-based styling
   id_country,
   country_shape_mod,
