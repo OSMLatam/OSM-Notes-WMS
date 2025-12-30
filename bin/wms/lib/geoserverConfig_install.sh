@@ -38,7 +38,10 @@ install_geoserver_config() {
  fi
 
  # Upload all styles first
- print_status "${BLUE}" "🎨 Uploading styles..."
+ # Note: Style upload via REST API may fail due to permission restrictions (403 Forbidden)
+ # In that case, styles must be created manually through the GeoServer web interface
+ print_status "${BLUE}" "🎨 Attempting to upload styles via REST API..."
+ print_status "${YELLOW}" "   Note: If upload fails (403 Forbidden), styles must be created manually via web interface"
  local STYLE_ERRORS=0
  if ! upload_style "${WMS_STYLE_OPEN_FILE}" "${WMS_STYLE_OPEN_NAME}"; then
   ((STYLE_ERRORS++))
@@ -85,9 +88,11 @@ install_geoserver_config() {
    local TARGET_SLD="${GEOSERVER_STYLES_DIR}/${STYLE_NAME}.sld"
    local COPY_SUCCESS=false
    
-   # First try without sudo (if we have write permissions)
-   if [[ -w "${GEOSERVER_STYLES_DIR}" ]]; then
+   # First try without sudo (if we have write permissions on directory or file)
+   # Check if directory is writable OR if file exists and is writable
+   if [[ -w "${GEOSERVER_STYLES_DIR}" ]] || ([[ -f "${TARGET_SLD}" ]] && [[ -w "${TARGET_SLD}" ]]); then
     if cp "${STYLE_FILE}" "${TARGET_SLD}" 2>/dev/null; then
+     # Try to set ownership if we have permissions (chown may fail, but that's OK)
      if [[ -n "${GEOSERVER_USER:-geoserver}" ]] && id "${GEOSERVER_USER}" &>/dev/null; then
       chown "${GEOSERVER_USER}:${GEOSERVER_USER}" "${TARGET_SLD}" 2>/dev/null || true
      fi
@@ -138,24 +143,33 @@ install_geoserver_config() {
    fi
   done
   
-  # Always show copy commands if any file failed or if we need to verify colors
+  # Always show copy commands and restart instructions
+  # Even if copy succeeded, GeoServer may need restart to reload styles from filesystem
+  print_status "${YELLOW}" ""
+  print_status "${YELLOW}" "   ⚠️  IMPORTANT: GeoServer needs to reload styles from filesystem"
+  print_status "${YELLOW}" "   GeoServer REST API transforms SLD 1.1.0 → 1.0.0 when storing internally"
+  print_status "${YELLOW}" "   After copying SLD files, you need to:"
+  print_status "${YELLOW}" ""
   if [[ "${COPY_FAILED}" == "true" ]] || [[ ${#FILES_TO_COPY[@]} -gt 0 ]]; then
-   print_status "${YELLOW}" ""
-   print_status "${YELLOW}" "   ⚠️  IMPORTANT: SLD files need to be copied manually to preserve colors"
-   print_status "${YELLOW}" "   GeoServer REST API transforms SLD 1.1.0 → 1.0.0 and loses SvgParameter (colors)"
-   print_status "${YELLOW}" "   Run these commands to copy SLD files and preserve colors:"
-   print_status "${YELLOW}" ""
-   print_status "${YELLOW}" "   sudo cp ${WMS_STYLE_OPEN_FILE} ${GEOSERVER_STYLES_DIR}/notesopen.sld"
-   print_status "${YELLOW}" "   sudo cp ${WMS_STYLE_CLOSED_FILE} ${GEOSERVER_STYLES_DIR}/notesclosed.sld"
+   print_status "${YELLOW}" "   1. Copy SLD files manually (if not already copied):"
+   print_status "${YELLOW}" "      sudo cp ${WMS_STYLE_OPEN_FILE} ${GEOSERVER_STYLES_DIR}/notesopen.sld"
+   print_status "${YELLOW}" "      sudo cp ${WMS_STYLE_CLOSED_FILE} ${GEOSERVER_STYLES_DIR}/notesclosed.sld"
    if [[ -n "${GEOSERVER_USER:-geoserver}" ]]; then
-    print_status "${YELLOW}" "   sudo chown ${GEOSERVER_USER}:${GEOSERVER_USER} ${GEOSERVER_STYLES_DIR}/notesopen.sld ${GEOSERVER_STYLES_DIR}/notesclosed.sld"
+    print_status "${YELLOW}" "      sudo chown ${GEOSERVER_USER}:${GEOSERVER_USER} ${GEOSERVER_STYLES_DIR}/notesopen.sld ${GEOSERVER_STYLES_DIR}/notesclosed.sld"
    fi
-   print_status "${YELLOW}" "   sudo systemctl restart geoserver"
    print_status "${YELLOW}" ""
-  else
-   # All files copied successfully, suggest restart
-   print_status "${GREEN}" "   ✅ All SLD files copied successfully with colors preserved"
-   print_status "${YELLOW}" "   💡 Tip: Restart GeoServer to reload styles: sudo systemctl restart geoserver"
+  fi
+  print_status "${YELLOW}" "   2. Recreate styles to point to filesystem files:"
+  print_status "${YELLOW}" "      curl -u \"\${GEOSERVER_USER}:\${GEOSERVER_PASSWORD}\" \"\${GEOSERVER_URL}/rest/styles/notesclosed\" -X DELETE"
+  print_status "${YELLOW}" "      curl -u \"\${GEOSERVER_USER}:\${GEOSERVER_PASSWORD}\" \"\${GEOSERVER_URL}/rest/styles/notesopen\" -X DELETE"
+  print_status "${YELLOW}" "      curl -u \"\${GEOSERVER_USER}:\${GEOSERVER_PASSWORD}\" \"\${GEOSERVER_URL}/rest/workspaces/\${GEOSERVER_WORKSPACE}/styles?name=notesclosed\" -X POST -H 'Content-Type: text/xml' -d '<style><name>notesclosed</name><filename>notesclosed.sld</filename></style>'"
+  print_status "${YELLOW}" "      curl -u \"\${GEOSERVER_USER}:\${GEOSERVER_PASSWORD}\" \"\${GEOSERVER_URL}/rest/workspaces/\${GEOSERVER_WORKSPACE}/styles?name=notesopen\" -X POST -H 'Content-Type: text/xml' -d '<style><name>notesopen</name><filename>notesopen.sld</filename></style>'"
+  print_status "${YELLOW}" ""
+  print_status "${YELLOW}" "   3. Restart GeoServer to reload styles:"
+  print_status "${YELLOW}" "      sudo systemctl restart geoserver"
+  print_status "${YELLOW}" ""
+  if [[ "${COPY_FAILED}" != "true" ]] && [[ ${#FILES_TO_COPY[@]} -eq 0 ]]; then
+   print_status "${GREEN}" "   ✅ SLD files copied successfully with colors preserved"
   fi
  fi
  
@@ -234,6 +248,41 @@ install_geoserver_config() {
 
  print_status "${GREEN}" "✅ GeoServer configuration completed successfully"
  show_configuration_summary
+
+ # Show manual style configuration instructions
+ print_status "${YELLOW}" ""
+ print_status "${YELLOW}" "⚠️  IMPORTANT: Style configuration must be completed manually"
+ print_status "${YELLOW}" "   The GeoServer REST API cannot create styles due to permission restrictions."
+ print_status "${YELLOW}" "   You must complete the style configuration through the GeoServer web interface:"
+ print_status "${YELLOW}" ""
+ print_status "${YELLOW}" "   1. Open GeoServer web interface:"
+ print_status "${YELLOW}" "      ${GEOSERVER_URL}/web"
+ print_status "${YELLOW}" ""
+ print_status "${YELLOW}" "   2. Navigate to Styles → Add a new style"
+ print_status "${YELLOW}" ""
+ print_status "${YELLOW}" "   3. Upload the following SLD files:"
+ print_status "${YELLOW}" "      - Style name: notesopen"
+ print_status "${YELLOW}" "        File: ${WMS_STYLE_OPEN_FILE}"
+ print_status "${YELLOW}" "      - Style name: notesclosed"
+ print_status "${YELLOW}" "        File: ${WMS_STYLE_CLOSED_FILE}"
+ print_status "${YELLOW}" "      - Style name: countries"
+ print_status "${YELLOW}" "        File: ${WMS_STYLE_COUNTRIES_FILE}"
+ print_status "${YELLOW}" "      - Style name: disputed_and_unclaimed_areas"
+ print_status "${YELLOW}" "        File: ${WMS_STYLE_DISPUTED_FILE}"
+ print_status "${YELLOW}" ""
+ print_status "${YELLOW}" "   4. Assign styles to layers:"
+ print_status "${YELLOW}" "      - Navigate to Layers → osm_notes:notesopen"
+ print_status "${YELLOW}" "        Set Default Style to: notesopen"
+ print_status "${YELLOW}" "      - Navigate to Layers → osm_notes:notesclosed"
+ print_status "${YELLOW}" "        Set Default Style to: notesclosed"
+ print_status "${YELLOW}" "      - Navigate to Layers → osm_notes:countries"
+ print_status "${YELLOW}" "        Set Default Style to: countries"
+ print_status "${YELLOW}" "      - Navigate to Layers → osm_notes:disputedareas"
+ print_status "${YELLOW}" "        Set Default Style to: disputed_and_unclaimed_areas"
+ print_status "${YELLOW}" ""
+ print_status "${YELLOW}" "   5. After assigning styles, restart GeoServer:"
+ print_status "${YELLOW}" "      sudo systemctl restart geoserver"
+ print_status "${YELLOW}" ""
 }
 # Function to show configuration summary
 show_configuration_summary() {

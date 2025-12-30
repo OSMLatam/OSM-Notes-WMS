@@ -37,7 +37,11 @@ upload_style() {
  fi
 
  # Check if style already exists (try both the provided name and the actual name)
+ # IMPORTANT: Check in workspace-specific styles first, then global styles
  local STYLE_CHECK_URL="${GEOSERVER_URL}/rest/styles/${ACTUAL_STYLE_NAME}"
+ if [[ -n "${GEOSERVER_WORKSPACE:-}" ]]; then
+  STYLE_CHECK_URL="${GEOSERVER_URL}/rest/workspaces/${GEOSERVER_WORKSPACE}/styles/${ACTUAL_STYLE_NAME}"
+ fi
  local TEMP_CHECK_FILE="${TMP_DIR}/style_check_${STYLE_NAME}_$$.tmp"
  local CHECK_HTTP_CODE
  CHECK_HTTP_CODE=$(curl -s -w "%{http_code}" -o "${TEMP_CHECK_FILE}" \
@@ -47,6 +51,9 @@ upload_style() {
  # If not found with actual name, try with provided name
  if [[ "${CHECK_HTTP_CODE}" != "200" ]] && [[ "${ACTUAL_STYLE_NAME}" != "${STYLE_NAME}" ]]; then
   STYLE_CHECK_URL="${GEOSERVER_URL}/rest/styles/${STYLE_NAME}"
+  if [[ -n "${GEOSERVER_WORKSPACE:-}" ]]; then
+   STYLE_CHECK_URL="${GEOSERVER_URL}/rest/workspaces/${GEOSERVER_WORKSPACE}/styles/${STYLE_NAME}"
+  fi
   CHECK_HTTP_CODE=$(curl -s -w "%{http_code}" -o "${TEMP_CHECK_FILE}" \
    -u "${GEOSERVER_USER}:${GEOSERVER_PASSWORD}" \
    "${STYLE_CHECK_URL}" 2> /dev/null | tail -1)
@@ -78,12 +85,17 @@ upload_style() {
   # GeoServer will extract the name from the SLD file itself
   # Use --data-binary to ensure the entire file is read correctly
   # Use application/vnd.ogc.se+xml to preserve SLD 1.1.0 format and SvgParameter elements
+  # IMPORTANT: Upload to workspace-specific styles endpoint to ensure styles are in the correct workspace
+  local STYLE_UPLOAD_URL="${GEOSERVER_URL}/rest/styles?name=${ACTUAL_STYLE_NAME}"
+  if [[ -n "${GEOSERVER_WORKSPACE:-}" ]]; then
+   STYLE_UPLOAD_URL="${GEOSERVER_URL}/rest/workspaces/${GEOSERVER_WORKSPACE}/styles?name=${ACTUAL_STYLE_NAME}"
+  fi
   HTTP_CODE=$(curl -s -w "%{http_code}" -o "${TEMP_RESPONSE_FILE}" \
    -X POST \
    -H "Content-Type: application/vnd.ogc.se+xml" \
    -u "${GEOSERVER_USER}:${GEOSERVER_PASSWORD}" \
    --data-binary "@${SLD_FILE}" \
-   "${GEOSERVER_URL}/rest/styles?name=${ACTUAL_STYLE_NAME}" 2> /dev/null | tail -1)
+   "${STYLE_UPLOAD_URL}" 2> /dev/null | tail -1)
  fi
 
  RESPONSE_BODY=$(cat "${TEMP_RESPONSE_FILE}" 2> /dev/null || echo "")
@@ -123,8 +135,10 @@ upload_style() {
    STYLE_UPLOADED=true
   fi
  else
-  print_status "${YELLOW}" "⚠️  Style upload failed (HTTP ${HTTP_CODE})"
-  if [[ -n "${RESPONSE_BODY}" ]]; then
+  print_status "${YELLOW}" "⚠️  Style upload skipped (HTTP ${HTTP_CODE})"
+  if [[ "${HTTP_CODE}" == "403" ]]; then
+   print_status "${YELLOW}" "   Permission denied (403 Forbidden) - Style must be created manually via web interface"
+  elif [[ -n "${RESPONSE_BODY}" ]]; then
    print_status "${YELLOW}" "   Error:"
    echo "${RESPONSE_BODY}" | head -20 | sed 's/^/      /'
   else
@@ -135,10 +149,9 @@ upload_style() {
    print_status "${YELLOW}" "   - File too large"
    print_status "${YELLOW}" "   - Check GeoServer logs: tail -f /opt/geoserver/logs/geoserver.log"
   fi
-  if [[ "${FORCE_UPLOAD}" == "true" ]]; then
-   print_status "${YELLOW}" "   Continuing with --force..."
-   STYLE_UPLOADED=true # Continue with --force
-  fi
+  # Always mark as uploaded=false when HTTP fails, but continue with installation
+  # User will complete style configuration manually via web interface
+  STYLE_UPLOADED=false
  fi
 
  rm -f "${TEMP_RESPONSE_FILE}" "${TEMP_CHECK_FILE}" 2> /dev/null || true
