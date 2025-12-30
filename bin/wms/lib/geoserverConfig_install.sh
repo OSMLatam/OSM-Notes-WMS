@@ -52,6 +52,78 @@ install_geoserver_config() {
  if ! upload_style "${WMS_STYLE_DISPUTED_FILE}" "${WMS_STYLE_DISPUTED_NAME}"; then
   ((STYLE_ERRORS++))
  fi
+ 
+ # IMPORTANT: After uploading styles via REST API, copy SLD files directly to preserve colors
+ # GeoServer REST API transforms SLD 1.1.0 to 1.0.0 and loses SvgParameter elements (colors)
+ # Process: 1) Upload via HTTP REST API (registers styles in GeoServer) 
+ #          2) Copy SLD files directly (preserves colors that REST API loses)
+ print_status "${YELLOW}" ""
+ print_status "${YELLOW}" "⚠️  IMPORTANT: Preserving SLD colors..."
+ print_status "${YELLOW}" "   Styles uploaded via HTTP REST API (required for GeoServer registration)"
+ print_status "${YELLOW}" "   Now copying SLD files directly to preserve colors (REST API loses them)..."
+ local GEOSERVER_STYLES_DIR=""
+ if [[ -n "${GEOSERVER_DATA_DIR:-}" ]] && [[ -d "${GEOSERVER_DATA_DIR}/styles" ]]; then
+  GEOSERVER_STYLES_DIR="${GEOSERVER_DATA_DIR}/styles"
+ elif [[ -n "${GEOSERVER_HOME:-}" ]] && [[ -d "${GEOSERVER_HOME}/data/geoserver/styles" ]]; then
+  GEOSERVER_STYLES_DIR="${GEOSERVER_HOME}/data/geoserver/styles"
+ elif [[ -d "/home/geoserver/data/geoserver/styles" ]]; then
+  GEOSERVER_STYLES_DIR="/home/geoserver/data/geoserver/styles"
+ fi
+ 
+ if [[ -n "${GEOSERVER_STYLES_DIR}" ]]; then
+  local NEEDS_MANUAL_COPY=false
+  # Try to copy OpenNotes and ClosedNotes (the ones with colors)
+  for STYLE_FILE in "${WMS_STYLE_OPEN_FILE}" "${WMS_STYLE_CLOSED_FILE}"; do
+   local STYLE_BASENAME=$(basename "${STYLE_FILE}" .sld)
+   local STYLE_NAME=""
+   case "${STYLE_BASENAME}" in
+    OpenNotes) STYLE_NAME="notesopen" ;;
+    ClosedNotes) STYLE_NAME="notesclosed" ;;
+    *) continue ;;
+   esac
+   local TARGET_SLD="${GEOSERVER_STYLES_DIR}/${STYLE_NAME}.sld"
+   
+   if [[ -w "${GEOSERVER_STYLES_DIR}" ]]; then
+    if cp "${STYLE_FILE}" "${TARGET_SLD}" 2>/dev/null; then
+     if [[ -n "${GEOSERVER_USER:-geoserver}" ]] && id "${GEOSERVER_USER}" &>/dev/null; then
+      chown "${GEOSERVER_USER}:${GEOSERVER_USER}" "${TARGET_SLD}" 2>/dev/null || true
+     fi
+     print_status "${GREEN}" "   ✅ ${STYLE_NAME}.sld copied directly (colors preserved)"
+    else
+     NEEDS_MANUAL_COPY=true
+    fi
+   else
+    NEEDS_MANUAL_COPY=true
+   fi
+  done
+  
+  if [[ "${NEEDS_MANUAL_COPY}" == "true" ]]; then
+   print_status "${YELLOW}" ""
+   print_status "${YELLOW}" "   ⚠️  Cannot copy SLD files directly (permission denied)"
+   print_status "${YELLOW}" "   GeoServer REST API transforms SLD 1.1.0 → 1.0.0 and loses colors"
+   print_status "${YELLOW}" "   The map will appear GRAY until you run:"
+   print_status "${YELLOW}" ""
+   print_status "${YELLOW}" "   sudo cp ${WMS_STYLE_OPEN_FILE} ${GEOSERVER_STYLES_DIR}/notesopen.sld"
+   print_status "${YELLOW}" "   sudo cp ${WMS_STYLE_CLOSED_FILE} ${GEOSERVER_STYLES_DIR}/notesclosed.sld"
+   if [[ -n "${GEOSERVER_USER:-geoserver}" ]]; then
+    print_status "${YELLOW}" "   sudo chown ${GEOSERVER_USER}:${GEOSERVER_USER} ${GEOSERVER_STYLES_DIR}/notesopen.sld ${GEOSERVER_STYLES_DIR}/notesclosed.sld"
+   fi
+   print_status "${YELLOW}" "   # Restart GeoServer to reload styles:"
+   local RESTART_CMD=""
+   if [[ -f "/home/geoserver/binaries/bin/shutdown.sh" ]] && [[ -f "/home/geoserver/binaries/bin/startup.sh" ]]; then
+    RESTART_CMD="/home/geoserver/binaries/bin/shutdown.sh && /home/geoserver/binaries/bin/startup.sh"
+   elif [[ -n "${GEOSERVER_HOME:-}" ]] && [[ -f "${GEOSERVER_HOME}/bin/shutdown.sh" ]] && [[ -f "${GEOSERVER_HOME}/bin/startup.sh" ]]; then
+    RESTART_CMD="${GEOSERVER_HOME}/bin/shutdown.sh && ${GEOSERVER_HOME}/bin/startup.sh"
+   fi
+   if [[ -n "${RESTART_CMD}" ]]; then
+    print_status "${YELLOW}" "   sudo ${RESTART_CMD}"
+   else
+    print_status "${YELLOW}" "   # Find GeoServer process and restart manually"
+   fi
+   print_status "${YELLOW}" ""
+  fi
+ fi
+ 
  # Upload country-based styles (alternative styles)
  # If styles failed and not using --force, exit
  if [[ ${STYLE_ERRORS} -gt 0 ]] && [[ "${FORCE:-false}" != "true" ]]; then
