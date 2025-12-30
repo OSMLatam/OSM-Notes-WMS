@@ -182,13 +182,20 @@ upload_style() {
    
    if [[ "${COPY_SUCCESS}" == "false" ]]; then
     # Could not copy - show warning with instructions
-    print_status "${YELLOW}" "   ⚠️  Cannot copy SLD file directly (permission denied)"
-    print_status "${YELLOW}" "      GeoServer REST API transforms SLD 1.1.0 → 1.0.0 and loses colors"
-    print_status "${YELLOW}" "      To preserve colors, copy manually:"
-    print_status "${YELLOW}" "         sudo cp ${SLD_FILE} ${TARGET_SLD}"
+    # This is important because GeoServer REST API transforms SLD 1.1.0 to 1.0.0
+    # and loses SvgParameter elements (colors), making the map appear gray
+    print_status "${YELLOW}" ""
+    print_status "${YELLOW}" "   ⚠️  IMPORTANT: Cannot copy SLD file directly to preserve colors"
+    print_status "${YELLOW}" "      GeoServer REST API transforms SLD 1.1.0 → 1.0.0 and loses SvgParameter (colors)"
+    print_status "${YELLOW}" "      The map will appear GRAY until you copy the SLD files manually:"
+    print_status "${YELLOW}" ""
+    print_status "${YELLOW}" "      sudo cp ${SLD_FILE} ${TARGET_SLD}"
     if [[ -n "${GEOSERVER_USER:-geoserver}" ]]; then
-     print_status "${YELLOW}" "         sudo chown ${GEOSERVER_USER}:${GEOSERVER_USER} ${TARGET_SLD}"
+     print_status "${YELLOW}" "      sudo chown ${GEOSERVER_USER}:${GEOSERVER_USER} ${TARGET_SLD}"
     fi
+    print_status "${YELLOW}" ""
+    print_status "${YELLOW}" "      Or configure sudo NOPASSWD for this directory to automate this step"
+    print_status "${YELLOW}" ""
    fi
   fi
  fi
