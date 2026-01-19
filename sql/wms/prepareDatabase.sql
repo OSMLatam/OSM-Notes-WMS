@@ -101,7 +101,7 @@ BEGIN
           extract (year from closed_at) AS year_closed_at,
           id_country,
           CASE 
-            WHEN id_country IS NOT NULL THEN id_country % 6
+            WHEN id_country IS NOT NULL AND id_country > 0 THEN id_country % 12
             ELSE NULL
           END AS country_shape_mod,
           ST_SetSRID(ST_MakePoint(longitude, latitude), 4326) AS geometry
@@ -132,7 +132,7 @@ BEGIN
           extract (year from closed_at) AS year_closed_at,
           id_country,
           CASE 
-            WHEN id_country IS NOT NULL THEN id_country % 6
+            WHEN id_country IS NOT NULL AND id_country > 0 THEN id_country % 12
             ELSE NULL
           END AS country_shape_mod,
           ST_SetSRID(ST_MakePoint(longitude, latitude), 4326) AS geometry
@@ -167,7 +167,7 @@ COMMENT ON COLUMN wms.notes_wms.year_closed_at IS
 COMMENT ON COLUMN wms.notes_wms.id_country IS
   'Country id where the note is located (NULL for unclaimed/disputed areas)';
 COMMENT ON COLUMN wms.notes_wms.country_shape_mod IS
-  'Modulo 6 of id_country for shape assignment (0-5, NULL if no country)';
+  'Modulo 12 of id_country for shape assignment (0-11, NULL if no country)';
 COMMENT ON COLUMN wms.notes_wms.geometry IS 'Location of the note';
 
 -- Index for open notes. The most important.
@@ -221,7 +221,7 @@ CREATE OR REPLACE FUNCTION wms.insert_new_notes()
       EXTRACT(YEAR FROM NEW.closed_at),
       COALESCE(NEW.id_country, NULL),
       CASE 
-        WHEN NEW.id_country IS NOT NULL THEN NEW.id_country % 6
+        WHEN NEW.id_country IS NOT NULL AND NEW.id_country > 0 THEN NEW.id_country % 6
         ELSE NULL
       END,
       ST_SetSRID(ST_MakePoint(NEW.longitude, NEW.latitude), 4326)
@@ -259,7 +259,7 @@ CREATE OR REPLACE FUNCTION wms.update_notes()
      year_closed_at = EXTRACT(YEAR FROM NEW.closed_at),
      id_country = COALESCE(NEW.id_country, NULL),
      country_shape_mod = CASE 
-       WHEN NEW.id_country IS NOT NULL THEN NEW.id_country % 6
+       WHEN NEW.id_country IS NOT NULL AND NEW.id_country > 0 THEN NEW.id_country % 6
        ELSE NULL
      END
    WHERE note_id = note_id_value
@@ -360,6 +360,8 @@ WITH
   -- Step 2: Find all overlapping areas (disputed zones)
   -- This finds intersections where 2 or more countries overlap
   -- Using a self-join to find pairs of overlapping countries
+  -- Exclude maritime zones (those with parentheses in name) from disputed calculation
+  -- as they can legitimately overlap with countries and each other (EEZ zones)
   -- Optimized: Calculate ST_Intersection only once
   country_pairs AS (
     SELECT
@@ -374,6 +376,29 @@ WITH
         c1.country_id < c2.country_id
         AND ST_Intersects(c1.geom, c2.geom)
         AND ST_Overlaps(c1.geom, c2.geom)
+        -- Exclude maritime zones from disputed calculation
+        -- Maritime zones can have parentheses in their name (e.g., "Colombia (200nm EEZ)")
+        -- or contain keywords like "EEZ", "Exclusive Economic Zone", "Economic Zone", "Contiguous Zone", "Territorial Waters", "Intervention zone"
+        AND c1.country_name_en NOT LIKE '%(%)%'
+        AND c2.country_name_en NOT LIKE '%(%)%'
+        AND c1.country_name_en NOT ILIKE '%EEZ%'
+        AND c2.country_name_en NOT ILIKE '%EEZ%'
+        AND c1.country_name_en NOT ILIKE '%Exclusive Economic Zone%'
+        AND c2.country_name_en NOT ILIKE '%Exclusive Economic Zone%'
+        AND c1.country_name_en NOT ILIKE '%Economic Zone%'
+        AND c2.country_name_en NOT ILIKE '%Economic Zone%'
+        AND c1.country_name_en NOT ILIKE '%Contiguous Zone%'
+        AND c2.country_name_en NOT ILIKE '%Contiguous Zone%'
+        AND c1.country_name_en NOT ILIKE '%Territorial Waters%'
+        AND c2.country_name_en NOT ILIKE '%Territorial Waters%'
+        AND c1.country_name_en NOT ILIKE '%baseline%'
+        AND c2.country_name_en NOT ILIKE '%baseline%'
+        AND c1.country_name_en NOT ILIKE '%Intervention zone%'
+        AND c2.country_name_en NOT ILIKE '%Intervention zone%'
+        AND c1.country_name_en NOT ILIKE '%Special Area%'
+        AND c2.country_name_en NOT ILIKE '%Special Area%'
+        AND c1.country_name_en NOT ILIKE '%Fishing territory%'
+        AND c2.country_name_en NOT ILIKE '%Fishing territory%'
       )
   ),
   -- Step 3: Extract individual polygons from intersections
@@ -430,9 +455,18 @@ WITH
     FROM
       valid_countries c
     WHERE
-      -- Exclude maritime zones (those with parentheses in name)
+      -- Exclude maritime zones (those with parentheses in name or maritime keywords)
       -- Use country_name_en from valid_countries CTE which handles column name differences
       c.country_name_en NOT LIKE '%(%)%'
+      AND c.country_name_en NOT ILIKE '%EEZ%'
+      AND c.country_name_en NOT ILIKE '%Exclusive Economic Zone%'
+      AND c.country_name_en NOT ILIKE '%Economic Zone%'
+      AND c.country_name_en NOT ILIKE '%Contiguous Zone%'
+      AND c.country_name_en NOT ILIKE '%Territorial Waters%'
+      AND c.country_name_en NOT ILIKE '%baseline%'
+      AND c.country_name_en NOT ILIKE '%Intervention zone%'
+      AND c.country_name_en NOT ILIKE '%Special Area%'
+      AND c.country_name_en NOT ILIKE '%Fishing territory%'
       AND ST_GeometryType(c.geom) IN ('ST_Polygon', 'ST_MultiPolygon')
       AND c.geom IS NOT NULL
       AND NOT ST_IsEmpty(c.geom)
@@ -525,7 +559,7 @@ CREATE INDEX IF NOT EXISTS idx_disputed_unclaimed_areas_geometry
   ON wms.disputed_and_unclaimed_areas USING GIST (geometry);
 
 COMMENT ON MATERIALIZED VIEW wms.disputed_and_unclaimed_areas IS
-  'Areas that are either disputed (overlapping countries) or unclaimed (gaps between countries). This is a materialized view that should be refreshed after countries are updated (monthly).';
+  'Areas that are either disputed (overlapping countries) or unclaimed (gaps between countries). Maritime zones (those with parentheses in name) are excluded from both calculations as they can legitimately overlap with countries and each other. This is a materialized view that should be refreshed after countries are updated (monthly).';
 COMMENT ON COLUMN wms.disputed_and_unclaimed_areas.id IS
   'Unique identifier for each area';
 COMMENT ON COLUMN wms.disputed_and_unclaimed_areas.geometry IS
@@ -569,7 +603,7 @@ COMMENT ON COLUMN public.notes_open_view.age_years IS
 COMMENT ON COLUMN public.notes_open_view.id_country IS
   'Country id where the note is located (NULL for unclaimed/disputed areas)';
 COMMENT ON COLUMN public.notes_open_view.country_shape_mod IS
-  'Modulo 6 of id_country for shape assignment (0-5, NULL if no country)';
+  'Modulo 12 of id_country for shape assignment (0-11, NULL if no country)';
 
 CREATE OR REPLACE VIEW public.notes_closed_view AS
 SELECT 
@@ -593,7 +627,7 @@ COMMENT ON COLUMN public.notes_closed_view.years_since_closed IS
 COMMENT ON COLUMN public.notes_closed_view.id_country IS
   'Country id where the note is located (NULL for unclaimed/disputed areas)';
 COMMENT ON COLUMN public.notes_closed_view.country_shape_mod IS
-  'Modulo 6 of id_country for shape assignment (0-5, NULL if no country)';
+  'Modulo 12 of id_country for shape assignment (0-11, NULL if no country)';
 
 -- Create view for disputed and unclaimed areas (for GeoServer layer)
 -- Note: View is created in 'public' schema to simplify GeoServer datastore

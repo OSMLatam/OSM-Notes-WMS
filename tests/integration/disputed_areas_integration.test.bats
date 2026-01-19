@@ -242,3 +242,36 @@ run_psql() {
   fi
 }
 
+@test "Disputed areas: should exclude maritime zones from disputed calculation" {
+  if [[ "${MOCK_MODE:-0}" == "1" ]]; then
+    skip "Skipping in mock mode"
+  fi
+  # Create view first
+  psql -d "${TEST_DBNAME}" -c "CREATE SCHEMA IF NOT EXISTS wms;" 2> /dev/null || true
+  # Insert overlapping countries and maritime zones
+  # Country A overlaps with Country B (should create disputed area)
+  # Maritime zone overlaps with Country A (should NOT create disputed area)
+  psql -d "${TEST_DBNAME}" -c "
+    INSERT INTO countries (country_id, country_name_en, geom) VALUES
+    (1, 'Country A', ST_MakeEnvelope(0, 0, 10, 10, 4326)),
+    (2, 'Country B', ST_MakeEnvelope(5, 5, 15, 15, 4326)),
+    (3, 'Country A (200nm EEZ)', ST_MakeEnvelope(-5, -5, 15, 15, 4326));
+  " 2> /dev/null || true
+  local prepare_sql="${SCRIPT_BASE_DIRECTORY}/sql/wms/prepareDatabase.sql"
+  if [[ -f "${prepare_sql}" ]]; then
+    run psql -d "${TEST_DBNAME}" -v ON_ERROR_STOP=1 -f "${prepare_sql}" 2>&1
+    [ "$status" -eq 0 ]
+    # Check that disputed areas exist (Country A vs Country B)
+    local disputed_count
+    disputed_count=$(run_psql "SELECT COUNT(*) FROM wms.disputed_and_unclaimed_areas WHERE zone_type = 'disputed';")
+    [ "$disputed_count" -ge 1 ]
+    # Check that maritime zone overlaps are NOT included in disputed areas
+    # (maritime zone name contains parentheses, so it should be excluded)
+    local maritime_disputed_count
+    maritime_disputed_count=$(run_psql "SELECT COUNT(*) FROM wms.disputed_and_unclaimed_areas WHERE zone_type = 'disputed' AND (country_names::text LIKE '%(%)%');")
+    [ "$maritime_disputed_count" -eq 0 ]
+  else
+    skip "prepareDatabase.sql not found"
+  fi
+}
+

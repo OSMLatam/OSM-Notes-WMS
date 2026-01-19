@@ -347,8 +347,10 @@ __On the Publishing tab:__
 The other options the same as for open notes.
 
 __Note__: Disputed areas are shown in red, unclaimed areas in yellow. Maritime
-zones are excluded from unclaimed areas calculation as they are intentionally
-not claimed (international waters).
+zones (those with parentheses in name, e.g., "Colombia (200nm EEZ)") are excluded
+from both disputed and unclaimed areas calculation, as they can legitimately overlap
+with countries and each other (EEZ zones) and are intentionally not claimed
+(international waters).
 
 ### Disk Quota
 
