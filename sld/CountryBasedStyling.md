@@ -14,7 +14,7 @@ close together.
 - **Color coding**: Each country gets a distinct base color based on its
   `id_country` value
 - **Shape coding**: Different geometric shapes (triangle, circle, square, star,
-  cross, arrow) are assigned based on `id_country % 6`
+  cross, x, plus, times, dot, open arrow, closed arrow, slash) are assigned based on `id_country % 12`
 - **Age indication**: Color intensity still reflects note age (darker = older for
   open notes, lighter = older for closed notes)
 - **Unclaimed areas**: Notes without country assignment (NULL) are displayed in
@@ -22,14 +22,20 @@ close together.
 
 ### Shape Assignment
 
-The shape is determined by `id_country % 6`:
+The shape is determined by `id_country % 12`:
 
 - **0**: Triangle (red/purple tones for open, dark gray for closed)
 - **1**: Circle (orange tones for open, cyan for closed)
 - **2**: Square (purple tones for open, teal for closed)
 - **3**: Star (blue tones for open, green for closed)
 - **4**: Cross (yellow/green tones for open, yellow for closed)
-- **5**: Arrow (pink/magenta tones for open, light blue for closed)
+- **5**: X (pink/magenta tones for open, light blue for closed)
+- **6**: Plus (shape://plus) - Plus sign without space
+- **7**: Times (shape://times) - X without space
+- **8**: Dot (shape://dot) - Small circle
+- **9**: Open Arrow (shape://oarrow) - Open arrow (triangle missing one side)
+- **10**: Closed Arrow (shape://carrow) - Closed arrow (filled triangle)
+- **11**: Slash (shape://slash) - Diagonal line (forward slash)
 
 ## Files
 
@@ -67,7 +73,7 @@ ALTER TABLE wms.notes_wms
 COMMENT ON COLUMN wms.notes_wms.id_country IS
   'Country id where the note is located (NULL for unclaimed/disputed areas)';
 COMMENT ON COLUMN wms.notes_wms.country_shape_mod IS
-  'Modulo 6 of id_country for shape assignment (0-5, NULL if no country)';
+  'Modulo 12 of id_country for shape assignment (0-11, NULL if no country)';
 ```
 
 2. Update existing records:
@@ -76,7 +82,7 @@ UPDATE wms.notes_wms nw
 SET 
   id_country = n.id_country,
   country_shape_mod = CASE 
-    WHEN n.id_country IS NOT NULL THEN n.id_country % 6
+    WHEN n.id_country IS NOT NULL AND n.id_country > 0 THEN n.id_country % 12
     ELSE NULL
   END
 FROM notes n

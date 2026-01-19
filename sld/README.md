@@ -75,8 +75,8 @@ dynamic age calculation, so no manual updates are required each year.
 
 Both styles include country-based differentiation:
 - Each country gets a distinct base color
-- Different shapes per country (triangle, circle, square, star, cross, arrow)
-- Shape is determined by `country_shape_mod` column (id_country % 6)
+- Different shapes per country (triangle, circle, square, star, cross, x, plus, times, dot, open arrow, closed arrow, slash)
+- Shape is determined by `country_shape_mod` column (id_country % 12)
 - Notes without country (NULL) are shown in gray
 
 ## Dynamic Age Calculation
@@ -92,7 +92,7 @@ This means the styles automatically update each year without requiring manual SL
 The styles automatically differentiate notes by country:
 
 - **Color coding**: Each country gets a distinct base color based on its `id_country` value
-- **Shape coding**: Different geometric shapes (triangle, circle, square, star, cross, arrow) are assigned based on `id_country % 6`
+- **Shape coding**: Different geometric shapes (triangle, circle, square, star, cross, x, plus, times, dot, open arrow, closed arrow, slash) are assigned based on `id_country % 12`
 - **Age indication**: Color intensity still reflects note age (darker = older for open notes, lighter = older for closed notes)
 - **Unclaimed areas**: Notes without country assignment (NULL) are displayed in gray
 

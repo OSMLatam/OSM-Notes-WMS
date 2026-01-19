@@ -295,6 +295,474 @@ Version: 2025-12-30
             </se:Graphic>
           </se:PointSymbolizer>
         </se:Rule>
+        <!-- Shape 6: Plus -->
+        <se:Rule>
+          <se:Name>0 years - Shape 6 - Bright Green Plus</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>6</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>0</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://plus</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00FF00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">1.0</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">1.0</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 7: Times -->
+        <se:Rule>
+          <se:Name>0 years - Shape 7 - Bright Green Times</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>7</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>0</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://times</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00FF00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">1.0</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">1.0</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 8: Dot -->
+        <se:Rule>
+          <se:Name>0 years - Shape 8 - Bright Green Dot</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>8</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>0</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://dot</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00FF00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">1.0</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">1.0</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 9: Open Arrow -->
+        <se:Rule>
+          <se:Name>0 years - Shape 9 - Bright Green Open Arrow</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>9</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>0</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://oarrow</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00FF00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">1.0</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">1.0</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 10: Closed Arrow -->
+        <se:Rule>
+          <se:Name>0 years - Shape 10 - Bright Green Closed Arrow</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>10</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>0</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://carrow</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00FF00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">1.0</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">1.0</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 11: Slash -->
+        <se:Rule>
+          <se:Name>0 years - Shape 11 - Bright Green Slash</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>11</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>0</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://slash</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00FF00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">1.0</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">1.0</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 6: Plus -->
+        <se:Rule>
+          <se:Name>1-2 years - Shape 6 - Medium Green Plus</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>6</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://plus</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00CC00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.9</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.9</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 7: Times -->
+        <se:Rule>
+          <se:Name>1-2 years - Shape 7 - Medium Green Times</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>7</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://times</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00CC00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.9</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.9</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 8: Dot -->
+        <se:Rule>
+          <se:Name>1-2 years - Shape 8 - Medium Green Dot</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>8</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://dot</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00CC00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.9</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.9</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 9: Open Arrow -->
+        <se:Rule>
+          <se:Name>1-2 years - Shape 9 - Medium Green Open Arrow</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>9</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://oarrow</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00CC00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.9</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.9</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 10: Closed Arrow -->
+        <se:Rule>
+          <se:Name>1-2 years - Shape 10 - Medium Green Closed Arrow</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>10</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://carrow</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00CC00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.9</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.9</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 11: Slash -->
+        <se:Rule>
+          <se:Name>1-2 years - Shape 11 - Medium Green Slash</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>11</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>1</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://slash</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00CC00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.9</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.9</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
         <!-- 1-2 years: Medium green, opacity 0.9 -->
         <!-- Shape -1: Circle -->
         <se:Rule>
@@ -609,6 +1077,240 @@ Version: 2025-12-30
             </se:Graphic>
           </se:PointSymbolizer>
         </se:Rule>
+        <!-- Shape 6: Plus -->
+        <se:Rule>
+          <se:Name>3-4 years - Shape 6 - Medium-Light Green Plus</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>6</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://plus</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00AA00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.8</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.8</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 7: Times -->
+        <se:Rule>
+          <se:Name>3-4 years - Shape 7 - Medium-Light Green Times</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>7</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://times</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00AA00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.8</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.8</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 8: Dot -->
+        <se:Rule>
+          <se:Name>3-4 years - Shape 8 - Medium-Light Green Dot</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>8</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://dot</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00AA00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.8</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.8</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 9: Open Arrow -->
+        <se:Rule>
+          <se:Name>3-4 years - Shape 9 - Medium-Light Green Open Arrow</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>9</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://oarrow</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00AA00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.8</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.8</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 10: Closed Arrow -->
+        <se:Rule>
+          <se:Name>3-4 years - Shape 10 - Medium-Light Green Closed Arrow</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>10</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://carrow</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00AA00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.8</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.8</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 11: Slash -->
+        <se:Rule>
+          <se:Name>3-4 years - Shape 11 - Medium-Light Green Slash</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>11</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>3</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://slash</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00AA00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.8</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.8</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
         <!-- Shape 0: Triangle -->
         <se:Rule>
           <se:Name>3-4 years - Shape 0 - Medium-Light Green Triangle</se:Name>
@@ -880,6 +1582,240 @@ Version: 2025-12-30
                 </se:Stroke>
               </se:Mark>
               <se:Size>12</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 6: Plus -->
+        <se:Rule>
+          <se:Name>5-6 years - Shape 6 - Light Green Plus</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>6</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://plus</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00FF00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.7</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.7</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 7: Times -->
+        <se:Rule>
+          <se:Name>5-6 years - Shape 7 - Light Green Times</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>7</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://times</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00FF00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.7</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.7</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 8: Dot -->
+        <se:Rule>
+          <se:Name>5-6 years - Shape 8 - Light Green Dot</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>8</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://dot</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00FF00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.7</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.7</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 9: Open Arrow -->
+        <se:Rule>
+          <se:Name>5-6 years - Shape 9 - Light Green Open Arrow</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>9</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://oarrow</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00FF00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.7</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.7</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 10: Closed Arrow -->
+        <se:Rule>
+          <se:Name>5-6 years - Shape 10 - Light Green Closed Arrow</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>10</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://carrow</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00FF00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.7</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.7</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 11: Slash -->
+        <se:Rule>
+          <se:Name>5-6 years - Shape 11 - Light Green Slash</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>11</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>5</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://slash</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#00FF00</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.7</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.7</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
             </se:Graphic>
           </se:PointSymbolizer>
         </se:Rule>
@@ -1157,6 +2093,240 @@ Version: 2025-12-30
             </se:Graphic>
           </se:PointSymbolizer>
         </se:Rule>
+        <!-- Shape 6: Plus -->
+        <se:Rule>
+          <se:Name>7-8 years - Shape 6 - Very Light Green Plus</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>6</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>9</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://plus</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#66FF66</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.6</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.6</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 7: Times -->
+        <se:Rule>
+          <se:Name>7-8 years - Shape 7 - Very Light Green Times</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>7</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>9</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://times</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#66FF66</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.6</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.6</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 8: Dot -->
+        <se:Rule>
+          <se:Name>7-8 years - Shape 8 - Very Light Green Dot</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>8</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>9</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://dot</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#66FF66</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.6</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.6</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 9: Open Arrow -->
+        <se:Rule>
+          <se:Name>7-8 years - Shape 9 - Very Light Green Open Arrow</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>9</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>9</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://oarrow</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#66FF66</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.6</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.6</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 10: Closed Arrow -->
+        <se:Rule>
+          <se:Name>7-8 years - Shape 10 - Very Light Green Closed Arrow</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>10</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>9</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://carrow</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#66FF66</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.6</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.6</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 11: Slash -->
+        <se:Rule>
+          <se:Name>7-8 years - Shape 11 - Very Light Green Slash</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>11</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:And>
+                <ogc:PropertyIsGreaterThanOrEqualTo>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>7</ogc:Literal>
+                </ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyIsLessThan>
+                  <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                  <ogc:Literal>9</ogc:Literal>
+                </ogc:PropertyIsLessThan>
+              </ogc:And>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://slash</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#66FF66</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.6</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.6</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
         <!-- Shape 0: Triangle -->
         <se:Rule>
           <se:Name>7-8 years - Shape 0 - Very Light Green Triangle</se:Name>
@@ -1422,6 +2592,204 @@ Version: 2025-12-30
                 </se:Stroke>
               </se:Mark>
               <se:Size>12</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 6: Plus -->
+        <se:Rule>
+          <se:Name>9+ years - Shape 6 - Very Dark Green Plus</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>6</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                <ogc:Literal>9</ogc:Literal>
+              </ogc:PropertyIsGreaterThanOrEqualTo>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://plus</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#006600</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.5</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 7: Times -->
+        <se:Rule>
+          <se:Name>9+ years - Shape 7 - Very Dark Green Times</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>7</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                <ogc:Literal>9</ogc:Literal>
+              </ogc:PropertyIsGreaterThanOrEqualTo>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://times</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#006600</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.5</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 8: Dot -->
+        <se:Rule>
+          <se:Name>9+ years - Shape 8 - Very Dark Green Dot</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>8</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                <ogc:Literal>9</ogc:Literal>
+              </ogc:PropertyIsGreaterThanOrEqualTo>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://dot</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#006600</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.5</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 9: Open Arrow -->
+        <se:Rule>
+          <se:Name>9+ years - Shape 9 - Very Dark Green Open Arrow</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>9</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                <ogc:Literal>9</ogc:Literal>
+              </ogc:PropertyIsGreaterThanOrEqualTo>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://oarrow</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#006600</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.5</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 10: Closed Arrow -->
+        <se:Rule>
+          <se:Name>9+ years - Shape 10 - Very Dark Green Closed Arrow</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>10</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                <ogc:Literal>9</ogc:Literal>
+              </ogc:PropertyIsGreaterThanOrEqualTo>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://carrow</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#006600</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.5</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
+            </se:Graphic>
+          </se:PointSymbolizer>
+        </se:Rule>
+        <!-- Shape 11: Slash -->
+        <se:Rule>
+          <se:Name>9+ years - Shape 11 - Very Dark Green Slash</se:Name>
+          <ogc:Filter>
+            <ogc:And>
+              <ogc:PropertyIsEqualTo>
+                <ogc:PropertyName>country_shape_mod</ogc:PropertyName>
+                <ogc:Literal>11</ogc:Literal>
+              </ogc:PropertyIsEqualTo>
+              <ogc:PropertyIsGreaterThanOrEqualTo>
+                <ogc:PropertyName>years_since_closed</ogc:PropertyName>
+                <ogc:Literal>9</ogc:Literal>
+              </ogc:PropertyIsGreaterThanOrEqualTo>
+            </ogc:And>
+          </ogc:Filter>
+          <se:PointSymbolizer>
+            <se:Graphic>
+              <se:Mark>
+                <se:WellKnownName>shape://slash</se:WellKnownName>
+                <se:Fill>
+                  <se:SvgParameter name="fill">#006600</se:SvgParameter>
+                  <se:SvgParameter name="fill-opacity">0.5</se:SvgParameter>
+                </se:Fill>
+                <se:Stroke>
+                  <se:SvgParameter name="stroke">#000000</se:SvgParameter>
+                  <se:SvgParameter name="stroke-width">1</se:SvgParameter>
+                  <se:SvgParameter name="stroke-opacity">0.5</se:SvgParameter>
+                </se:Stroke>
+              </se:Mark>
+              <se:Size>14</se:Size>
             </se:Graphic>
           </se:PointSymbolizer>
         </se:Rule>
