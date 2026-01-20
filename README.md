@@ -2,18 +2,18 @@
 
 **Web Map Service (WMS) for OpenStreetMap Notes**
 
-This repository provides WMS (Web Map Service) layer publication for OSM notes,
-allowing mappers to visualize note activity geographically in mapping
-applications like JOSM or Vespucci.
+This repository provides WMS (Web Map Service) layer publication for OSM notes, allowing mappers to
+visualize note activity geographically in mapping applications like JOSM or Vespucci.
 
-> **Note:** This project was extracted from [OSM-Notes-Ingestion](https://github.com/OSM-Notes/OSM-Notes-Ingestion)
-> to provide focused documentation and maintainability. The WMS service requires
-> access to a database populated by the OSM-Notes-Ingestion project.
+> **Note:** This project was extracted from
+> [OSM-Notes-Ingestion](https://github.com/OSM-Notes/OSM-Notes-Ingestion) to provide focused
+> documentation and maintainability. The WMS service requires access to a database populated by the
+> OSM-Notes-Ingestion project.
 
 ## Overview
 
-This project provides a complete WMS service that displays the location of open
-and closed OSM notes on a map. The service allows mappers to:
+This project provides a complete WMS service that displays the location of open and closed OSM notes
+on a map. The service allows mappers to:
 
 - **Visualize note activity geographically**: View all notes in an area at once
 - **Identify patterns**: Notice where many notes are clustered
@@ -50,7 +50,8 @@ and closed OSM notes on a map. The service allows mappers to:
 Before installing WMS, ensure you have:
 
 1. **PostgreSQL with PostGIS**
-   - Database must be populated by [OSM-Notes-Ingestion](https://github.com/OSM-Notes/OSM-Notes-Ingestion)
+   - Database must be populated by
+     [OSM-Notes-Ingestion](https://github.com/OSM-Notes/OSM-Notes-Ingestion)
    - Access to tables: `notes`, `countries` (schema `public`)
    - PostGIS extension installed
 
@@ -65,16 +66,17 @@ Before installing WMS, ensure you have:
 
 ### Verifying Database Schema Compatibility
 
-Before installing WMS, verify that your database schema matches the expected schema from OSM-Notes-Ingestion:
+Before installing WMS, verify that your database schema matches the expected schema from
+OSM-Notes-Ingestion:
 
 ```bash
 # Check if required columns exist in notes table
 psql -d notes -c "
-SELECT 
-  column_name, 
-  data_type 
-FROM information_schema.columns 
-WHERE table_name = 'notes' 
+SELECT
+  column_name,
+  data_type
+FROM information_schema.columns
+WHERE table_name = 'notes'
   AND column_name IN ('note_id', 'created_at', 'closed_at', 'longitude', 'latitude', 'id_country')
 ORDER BY column_name;
 "
@@ -90,8 +92,8 @@ ORDER BY column_name;
 # Check if countries table exists
 psql -d notes -c "
 SELECT EXISTS (
-  SELECT 1 FROM information_schema.tables 
-  WHERE table_schema = 'public' 
+  SELECT 1 FROM information_schema.tables
+  WHERE table_schema = 'public'
     AND table_name = 'countries'
 );
 "
@@ -100,7 +102,9 @@ SELECT EXISTS (
 psql -d notes -c "SELECT PostGIS_Version();"
 ```
 
-**Important:** The WMS installation script (`prepareDatabase.sql`) will automatically validate the schema and report any missing columns. If validation fails, ensure you have the correct version of OSM-Notes-Ingestion installed and that the database has been properly populated.
+**Important:** The WMS installation script (`prepareDatabase.sql`) will automatically validate the
+schema and report any missing columns. If validation fails, ensure you have the correct version of
+OSM-Notes-Ingestion installed and that the database has been properly populated.
 
 ## Quick Start
 
@@ -142,7 +146,8 @@ psql -d notes -f sql/wms/grantGeoserverPermissions.sql
 
 - **WMS URL**: `http://localhost:8080/geoserver/wms` (or your GeoServer URL)
 - **Layer Name**: `osm_notes:notes_wms_layer`
-- **GetCapabilities**: `http://localhost:8080/geoserver/wms?service=WMS&version=1.1.0&request=GetCapabilities`
+- **GetCapabilities**:
+  `http://localhost:8080/geoserver/wms?service=WMS&version=1.1.0&request=GetCapabilities`
 
 ## Practical Examples
 
@@ -201,7 +206,8 @@ psql -d notes -c "SELECT COUNT(*) FROM wms.notes_wms;"
 2. Go to **Imagery** → **Imagery preferences**
 3. Click **Add new** → **WMS/WMTS**
 4. Enter WMS URL: `http://your-server:8080/geoserver/wms`
-5. Select layer: `osm_notes:notesopen` (for open notes) or `osm_notes:notesclosed` (for closed notes)
+5. Select layer: `osm_notes:notesopen` (for open notes) or `osm_notes:notesclosed` (for closed
+   notes)
 6. Click **OK** and the layer will appear in your map
 
 ### Example 5: Querying Notes via WMS GetFeatureInfo
@@ -223,9 +229,12 @@ done
 
 ## Documentation
 
-- **[WMS_Guide.md](./docs/WMS_Guide.md)**: Complete technical guide for administrators and developers
-  - Includes [Schema Compatibility](./docs/WMS_Guide.md#schema-compatibility) section for verifying database schema
-- **[WMS_User_Guide.md](./docs/WMS_User_Guide.md)**: User guide for mappers and end users - How to use WMS in JOSM/Vespucci
+- **[WMS_Guide.md](./docs/WMS_Guide.md)**: Complete technical guide for administrators and
+  developers
+  - Includes [Schema Compatibility](./docs/WMS_Guide.md#schema-compatibility) section for verifying
+    database schema
+- **[WMS_User_Guide.md](./docs/WMS_User_Guide.md)**: User guide for mappers and end users - How to
+  use WMS in JOSM/Vespucci
 - **[bin/wms/README.md](./bin/wms/README.md)**: Scripts documentation
 - **[sql/wms/README.md](./sql/wms/README.md)**: SQL scripts documentation
   - Includes schema verification instructions and `verifySchema.sql` script
@@ -235,7 +244,8 @@ done
 
 ### External Dependencies
 
-- **OSM-Notes-Ingestion Database**: This project requires access to a PostgreSQL database populated by the [OSM-Notes-Ingestion](https://github.com/OSM-Notes/OSM-Notes-Ingestion) project
+- **OSM-Notes-Ingestion Database**: This project requires access to a PostgreSQL database populated
+  by the [OSM-Notes-Ingestion](https://github.com/OSM-Notes/OSM-Notes-Ingestion) project
   - Schema `public`: tables `notes`, `countries`
   - This WMS project creates and manages schema `wms`
 
@@ -296,16 +306,20 @@ To remove WMS components:
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file
+for details.
 
 ## Data License
 
-**Important:** This repository contains only code and configuration files. All data processed by this system comes from **OpenStreetMap (OSM)** and is licensed under the **Open Database License (ODbL)**.
+**Important:** This repository contains only code and configuration files. All data processed by
+this system comes from **OpenStreetMap (OSM)** and is licensed under the **Open Database License
+(ODbL)**.
 
 - **OSM Data License:** [Open Database License (ODbL)](http://opendatacommons.org/licenses/odbl/)
 - **OSM Copyright:** [OpenStreetMap contributors](http://www.openstreetmap.org/copyright)
 
-For more information about OSM licensing, see: [https://www.openstreetmap.org/copyright](https://www.openstreetmap.org/copyright)
+For more information about OSM licensing, see:
+[https://www.openstreetmap.org/copyright](https://www.openstreetmap.org/copyright)
 
 ## Contributing
 
@@ -314,5 +328,3 @@ Contributions are welcome! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) fil
 ## Author
 
 Andres Gomez (AngocA)
-
-

@@ -2,22 +2,23 @@
 
 ## Documentation Index
 
-This is the complete WMS documentation guide for system administrators and developers. For end users:
+This is the complete WMS documentation guide for system administrators and developers. For end
+users:
 
-- **[WMS_User_Guide.md](./WMS_User_Guide.md)**: User guide for mappers and end users - How to use WMS in JOSM/Vespucci
+- **[WMS_User_Guide.md](./WMS_User_Guide.md)**: User guide for mappers and end users - How to use
+  WMS in JOSM/Vespucci
 
 ## Overview
 
-The WMS (Web Map Service) project provides a map service that displays the
-location of open and closed OSM notes. This
-service allows mappers to visualize note activity geographically, helping
+The WMS (Web Map Service) project provides a map service that displays the location of open and
+closed OSM notes. This service allows mappers to visualize note activity geographically, helping
 identify areas that need attention or have been recently processed.
 
 ### What is WMS?
 
-WMS (Web Map Service) is an OGC (Open Geospatial Consortium) standard that
-provides map images over the internet. In our context, it serves OSM notes as
-map layers that can be viewed in mapping applications like JOSM or Vespucci.
+WMS (Web Map Service) is an OGC (Open Geospatial Consortium) standard that provides map images over
+the internet. In our context, it serves OSM notes as map layers that can be viewed in mapping
+applications like JOSM or Vespucci.
 
 ### Key Features
 
@@ -192,7 +193,7 @@ Before installing WMS, ensure you have:
    ```bash
    # Ubuntu/Debian
    sudo apt-get install postgresql postgis
-   
+
    # CentOS/RHEL
    sudo yum install postgresql postgis
    ```
@@ -215,7 +216,8 @@ Before installing WMS, ensure you have:
 4. **OSM-Notes-Ingestion Database**
    - Main database must be populated with notes data
    - API or Planet processing should be completed
-   - Database schema must match the expected schema (see [Schema Compatibility](#schema-compatibility) below)
+   - Database schema must match the expected schema (see
+     [Schema Compatibility](#schema-compatibility) below)
 
 ### Installation Steps
 
@@ -270,29 +272,31 @@ For a complete automated setup:
 
 ### Verifying Database Schema Compatibility
 
-Before installing WMS, it's important to verify that your database schema matches the expected schema from OSM-Notes-Ingestion. The WMS project requires specific columns and tables to function correctly.
+Before installing WMS, it's important to verify that your database schema matches the expected
+schema from OSM-Notes-Ingestion. The WMS project requires specific columns and tables to function
+correctly.
 
 #### Required Schema Elements
 
 The `notes` table must have the following columns:
 
-| Column Name | Data Type | Required | Description |
-|------------|-----------|----------|-------------|
-| `note_id` | INTEGER or BIGINT | Yes | Unique identifier for the note |
-| `created_at` | TIMESTAMP or TIMESTAMPTZ | Yes | When the note was created |
-| `closed_at` | TIMESTAMP or TIMESTAMPTZ | No | When the note was closed (NULL if open) |
-| `longitude` | DOUBLE PRECISION or NUMERIC | Yes | Longitude coordinate |
-| `latitude` | DOUBLE PRECISION or NUMERIC | Yes | Latitude coordinate |
-| `id_country` | INTEGER | No | Country ID (optional, but recommended for country-based styling) |
+| Column Name  | Data Type                   | Required | Description                                                      |
+| ------------ | --------------------------- | -------- | ---------------------------------------------------------------- |
+| `note_id`    | INTEGER or BIGINT           | Yes      | Unique identifier for the note                                   |
+| `created_at` | TIMESTAMP or TIMESTAMPTZ    | Yes      | When the note was created                                        |
+| `closed_at`  | TIMESTAMP or TIMESTAMPTZ    | No       | When the note was closed (NULL if open)                          |
+| `longitude`  | DOUBLE PRECISION or NUMERIC | Yes      | Longitude coordinate                                             |
+| `latitude`   | DOUBLE PRECISION or NUMERIC | Yes      | Latitude coordinate                                              |
+| `id_country` | INTEGER                     | No       | Country ID (optional, but recommended for country-based styling) |
 
 The `countries` table must exist in the `public` schema:
 
-| Column Name | Data Type | Required | Description |
-|------------|-----------|----------|-------------|
-| `country_id` | INTEGER | Yes | Unique identifier for the country |
-| `country_name` | VARCHAR or TEXT | Yes | Country name |
-| `country_name_en` | VARCHAR or TEXT | No | English country name |
-| `geom` | GEOMETRY | Yes | Country boundary geometry (PostGIS) |
+| Column Name       | Data Type       | Required | Description                         |
+| ----------------- | --------------- | -------- | ----------------------------------- |
+| `country_id`      | INTEGER         | Yes      | Unique identifier for the country   |
+| `country_name`    | VARCHAR or TEXT | Yes      | Country name                        |
+| `country_name_en` | VARCHAR or TEXT | No       | English country name                |
+| `geom`            | GEOMETRY        | Yes      | Country boundary geometry (PostGIS) |
 
 #### Automated Schema Verification Script
 
@@ -304,6 +308,7 @@ psql -d notes -f sql/wms/verifySchema.sql
 ```
 
 This script will:
+
 - ✅ Check PostGIS extension installation
 - ✅ Verify `notes` table exists
 - ✅ Validate all required columns are present
@@ -311,7 +316,8 @@ This script will:
 - ✅ Verify data is available
 - ✅ Provide a summary report
 
-The script will exit with an error code if any required elements are missing, making it suitable for use in automated checks and CI/CD pipelines.
+The script will exit with an error code if any required elements are missing, making it suitable for
+use in automated checks and CI/CD pipelines.
 
 #### Manual Verification
 
@@ -320,9 +326,9 @@ You can also verify the schema manually:
 ```bash
 # Check required columns in notes table
 psql -d notes -c "
-SELECT column_name, data_type 
-FROM information_schema.columns 
-WHERE table_name = 'notes' 
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'notes'
   AND column_name IN ('note_id', 'created_at', 'closed_at', 'longitude', 'latitude', 'id_country')
 ORDER BY column_name;
 "
@@ -330,8 +336,8 @@ ORDER BY column_name;
 # Verify countries table exists
 psql -d notes -c "
 SELECT EXISTS (
-  SELECT 1 FROM information_schema.tables 
-  WHERE table_schema = 'public' 
+  SELECT 1 FROM information_schema.tables
+  WHERE table_schema = 'public'
     AND table_name = 'countries'
 );
 "
@@ -346,20 +352,23 @@ psql -d notes -c "SELECT COUNT(*) FROM countries;"
 
 #### Automatic Validation During Installation
 
-The WMS installation script (`prepareDatabase.sql`) automatically validates the schema during installation:
+The WMS installation script (`prepareDatabase.sql`) automatically validates the schema during
+installation:
 
 - ✅ Checks for PostGIS extension
 - ✅ Validates required columns in `notes` table
 - ✅ Warns if `id_country` column is missing (optional but recommended)
 - ✅ Checks for `countries` table existence
 
-If validation fails, the installation will stop with a clear error message indicating what's missing.
+If validation fails, the installation will stop with a clear error message indicating what's
+missing.
 
 #### Troubleshooting Schema Issues
 
 **Problem:** Missing columns error during installation
 
 **Solution:**
+
 1. Verify you have the correct version of OSM-Notes-Ingestion installed
 2. Ensure the database has been populated by running the ingestion process
 3. Check the OSM-Notes-Ingestion documentation for the current schema version
@@ -368,25 +377,31 @@ If validation fails, the installation will stop with a clear error message indic
 **Problem:** Column names don't match (e.g., `lon`/`lat` instead of `longitude`/`latitude`)
 
 **Solution:**
+
 - The WMS project requires the exact schema as defined by OSM-Notes-Ingestion
 - Ensure you're using the standard schema with `longitude`/`latitude` column names
-- If your database uses different column names, you may need to migrate or update OSM-Notes-Ingestion
+- If your database uses different column names, you may need to migrate or update
+  OSM-Notes-Ingestion
 
 **Problem:** Countries table missing
 
 **Solution:**
+
 - Run the country assignment process in OSM-Notes-Ingestion
 - The `countries` table is required for disputed areas view and country-based styling
 
 #### Version Compatibility
 
-The WMS project is designed to work with the current schema version of OSM-Notes-Ingestion. If you encounter schema compatibility issues:
+The WMS project is designed to work with the current schema version of OSM-Notes-Ingestion. If you
+encounter schema compatibility issues:
 
 1. **Check OSM-Notes-Ingestion version**: Ensure you're using a compatible version
 2. **Review changelog**: Check if there have been recent schema changes in OSM-Notes-Ingestion
-3. **Update if needed**: Upgrade OSM-Notes-Ingestion to the latest version if your version is outdated
+3. **Update if needed**: Upgrade OSM-Notes-Ingestion to the latest version if your version is
+   outdated
 
-For the latest schema requirements, refer to the [OSM-Notes-Ingestion documentation](https://github.com/OSM-Notes/OSM-Notes-Ingestion).
+For the latest schema requirements, refer to the
+[OSM-Notes-Ingestion documentation](https://github.com/OSM-Notes/OSM-Notes-Ingestion).
 
 ## Practical Examples
 
@@ -579,8 +594,8 @@ curl "http://localhost:8080/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetC
 
 The WMS system uses a centralized configuration file: `etc/wms.properties.sh`
 
-**Important**: This file is not tracked in Git for security reasons. You must
-create it from the example file:
+**Important**: This file is not tracked in Git for security reasons. You must create it from the
+example file:
 
 ```bash
 # Copy the example file
@@ -590,8 +605,8 @@ cp etc/wms.properties.sh.example etc/wms.properties.sh
 vi etc/wms.properties.sh
 ```
 
-The example file contains default values and detailed comments. Replace the
-example values with your actual configuration.
+The example file contains default values and detailed comments. Replace the example values with your
+actual configuration.
 
 #### Key Configuration Sections
 
@@ -677,9 +692,12 @@ export WMS_STYLE_CLOSED_FILE="/path/to/my/custom_closed.sld"
 
 #### Service URLs
 
-- **GetCapabilities**: `http://localhost:8080/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities`
-- **GetMap**: `http://localhost:8080/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=osm_notes:notes_wms_layer&STYLES=&CRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=256&HEIGHT=256&FORMAT=image/png`
-- **GetFeatureInfo**: `http://localhost:8080/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=osm_notes:notes_wms_layer&QUERY_LAYERS=osm_notes:notes_wms_layer&INFO_FORMAT=application/json&I=128&J=128&WIDTH=256&HEIGHT=256&CRS=EPSG:4326&BBOX=-180,-90,180,90`
+- **GetCapabilities**:
+  `http://localhost:8080/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities`
+- **GetMap**:
+  `http://localhost:8080/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=osm_notes:notes_wms_layer&STYLES=&CRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=256&HEIGHT=256&FORMAT=image/png`
+- **GetFeatureInfo**:
+  `http://localhost:8080/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=osm_notes:notes_wms_layer&QUERY_LAYERS=osm_notes:notes_wms_layer&INFO_FORMAT=application/json&I=128&J=128&WIDTH=256&HEIGHT=256&CRS=EPSG:4326&BBOX=-180,-90,180,90`
 
 #### GetFeatureInfo Request
 
@@ -687,20 +705,20 @@ GetFeatureInfo returns feature information for a specific pixel location on the 
 
 **Parameters:**
 
-| Parameter | Required | Type | Description |
-|-----------|----------|------|-------------|
-| `SERVICE` | Yes | String | Service type (WMS) |
-| `VERSION` | Yes | String | WMS version (1.3.0) |
-| `REQUEST` | Yes | String | Request type (GetFeatureInfo) |
-| `LAYERS` | Yes | String | Layer name |
-| `QUERY_LAYERS` | Yes | String | Query layer name |
-| `INFO_FORMAT` | Yes | String | Response format (text/html, application/json, text/plain) |
-| `I` | Yes | Integer | Pixel X coordinate |
-| `J` | Yes | Integer | Pixel Y coordinate |
-| `WIDTH` | Yes | Integer | Image width |
-| `HEIGHT` | Yes | Integer | Image height |
-| `CRS` | Yes | String | Coordinate reference system |
-| `BBOX` | Yes | String | Bounding box |
+| Parameter      | Required | Type    | Description                                               |
+| -------------- | -------- | ------- | --------------------------------------------------------- |
+| `SERVICE`      | Yes      | String  | Service type (WMS)                                        |
+| `VERSION`      | Yes      | String  | WMS version (1.3.0)                                       |
+| `REQUEST`      | Yes      | String  | Request type (GetFeatureInfo)                             |
+| `LAYERS`       | Yes      | String  | Layer name                                                |
+| `QUERY_LAYERS` | Yes      | String  | Query layer name                                          |
+| `INFO_FORMAT`  | Yes      | String  | Response format (text/html, application/json, text/plain) |
+| `I`            | Yes      | Integer | Pixel X coordinate                                        |
+| `J`            | Yes      | Integer | Pixel Y coordinate                                        |
+| `WIDTH`        | Yes      | Integer | Image width                                               |
+| `HEIGHT`       | Yes      | Integer | Image height                                              |
+| `CRS`          | Yes      | String  | Coordinate reference system                               |
+| `BBOX`         | Yes      | String  | Bounding box                                              |
 
 **Example JSON Response:**
 
@@ -891,7 +909,7 @@ psql -d notes -c "SELECT schemaname, tablename, indexname FROM pg_indexes
 ```bash
 # Check database performance
 psql -d notes -c \
-  "SELECT schemaname, tablename, n_tup_ins, n_tup_upd, n_tup_del 
+  "SELECT schemaname, tablename, n_tup_ins, n_tup_upd, n_tup_del
   FROM pg_stat_user_tables WHERE schemaname = 'wms';"
 
 # Check GeoServer performance
@@ -932,9 +950,9 @@ journalctl -u geoserver -f
 psql -d notes -f sql/wms/prepareDatabase.sql
 
 # Repopulate WMS data
-psql -d notes -c "INSERT INTO wms.notes_wms 
+psql -d notes -c "INSERT INTO wms.notes_wms
   SELECT note_id, extract(year from created_at), extract(year from closed_at),
-    ST_SetSRID(ST_MakePoint(lon, lat), 4326) FROM notes 
+    ST_SetSRID(ST_MakePoint(lon, lat), 4326) FROM notes
     WHERE lon IS NOT NULL AND lat IS NOT NULL;"
 ```
 
@@ -942,7 +960,8 @@ psql -d notes -c "INSERT INTO wms.notes_wms
 
 ### WMS Schema Overview
 
-The WMS system uses a dedicated schema (`wms`) to optimize performance and maintain separation of concerns.
+The WMS system uses a dedicated schema (`wms`) to optimize performance and maintain separation of
+concerns.
 
 ```sql
 -- WMS Schema
@@ -1047,7 +1066,7 @@ CREATE TRIGGER update_notes
 ```sql
 -- Populate WMS table from main notes table
 INSERT INTO wms.notes_wms
-SELECT 
+SELECT
     note_id,
     extract(year from created_at) AS year_created_at,
     extract(year from closed_at) AS year_closed_at,
@@ -1176,11 +1195,11 @@ check_wms_service() {
 # Main health check
 main() {
     local failed=0
-    
+
     check_database || failed=1
     check_geoserver || failed=1
     check_wms_service || failed=1
-    
+
     if [ $failed -eq 1 ]; then
         echo "$(date): WMS health check FAILED" >> $LOG_FILE
         echo "WMS health check failed. Check logs at $LOG_FILE" | mail -s \
@@ -1401,7 +1420,7 @@ grep "ERROR" /opt/geoserver/logs/geoserver.log | \
 
 ```yaml
 # docker-compose.prod.yml
-version: '3.8'
+version: "3.8"
 services:
   postgres-prod:
     image: postgis/postgis:13-3.1
@@ -1487,19 +1506,24 @@ export GEOSERVER_OPTS="-Xms4g -Xmx8g -XX:+UseG1GC"
 
 #### WMS Documentation
 
-- **[WMS_User_Guide.md](./WMS_User_Guide.md)**: Step-by-step user guide for mappers using WMS in JOSM/Vespucci
+- **[WMS_User_Guide.md](./WMS_User_Guide.md)**: Step-by-step user guide for mappers using WMS in
+  JOSM/Vespucci
 
 #### System Documentation
 
-> **Note:** The following documentation files are part of the [OSM-Notes-Ingestion](https://github.com/OSM-Notes/OSM-Notes-Ingestion) project, which provides the data source for this WMS service:
+> **Note:** The following documentation files are part of the
+> [OSM-Notes-Ingestion](https://github.com/OSM-Notes/OSM-Notes-Ingestion) project, which provides
+> the data source for this WMS service:
 >
-> - **Documentation.md**: Complete system architecture and technical overview (in OSM-Notes-Ingestion)
+> - **Documentation.md**: Complete system architecture and technical overview (in
+>   OSM-Notes-Ingestion)
 > - **Component_Dependencies.md**: Component dependencies and data flow (in OSM-Notes-Ingestion)
 > - **Troubleshooting_Guide.md**: Centralized troubleshooting guide (in OSM-Notes-Ingestion)
 
 #### Processing Documentation
 
-> **Note:** The following documentation files describe the data ingestion process in the [OSM-Notes-Ingestion](https://github.com/OSM-Notes/OSM-Notes-Ingestion) project:
+> **Note:** The following documentation files describe the data ingestion process in the
+> [OSM-Notes-Ingestion](https://github.com/OSM-Notes/OSM-Notes-Ingestion) project:
 >
 > - **Process_API.md**: API processing details (WMS data source) (in OSM-Notes-Ingestion)
 > - **Process_Planet.md**: Planet processing details (WMS data source) (in OSM-Notes-Ingestion)
@@ -1507,5 +1531,7 @@ export GEOSERVER_OPTS="-Xms4g -Xmx8g -XX:+UseG1GC"
 #### Script Reference
 
 - **[bin/wms/README.md](../bin/wms/README.md)**: WMS script usage examples and documentation
-- **Script Entry Points**: `wmsManager.sh` and `geoserverConfig.sh` (see [bin/wms/README.md](../bin/wms/README.md))
-- **Environment Variables**: See `etc/wms.properties.sh.example` for all available configuration variables
+- **Script Entry Points**: `wmsManager.sh` and `geoserverConfig.sh` (see
+  [bin/wms/README.md](../bin/wms/README.md))
+- **Environment Variables**: See `etc/wms.properties.sh.example` for all available configuration
+  variables

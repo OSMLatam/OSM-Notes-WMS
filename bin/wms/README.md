@@ -1,7 +1,7 @@
 # WMS Manager Scripts
 
-This directory contains scripts for managing WMS (Web Map Service) components for
-the OSM-Notes-WMS project.
+This directory contains scripts for managing WMS (Web Map Service) components for the OSM-Notes-WMS
+project.
 
 ## Configuration
 
@@ -9,8 +9,8 @@ the OSM-Notes-WMS project.
 
 The WMS system uses a dedicated properties file for easy customization.
 
-**Important**: This file is not tracked in Git for security reasons. You must
-create it from the example file:
+**Important**: This file is not tracked in Git for security reasons. You must create it from the
+example file:
 
 ```bash
 # Copy the example file
@@ -31,6 +31,7 @@ export GEOSERVER_URL="https://my-geoserver.com/geoserver"
 ```
 
 **Security Best Practices:**
+
 - Never commit `wms.properties.sh` to Git (it's in .gitignore)
 - Use `chmod 600` to restrict file permissions
 - Edit credentials locally on each server
@@ -76,11 +77,10 @@ Manages the installation and removal of WMS components in the database.
 - `--dry-run`: Show what would be done without executing
 - `--verbose`: Show detailed output
 
-
 ### 2. geoserverConfig.sh
 
-Automates GeoServer setup for WMS layers. This script configures GeoServer to
-serve OSM notes as WMS layers.
+Automates GeoServer setup for WMS layers. This script configures GeoServer to serve OSM notes as WMS
+layers.
 
 **Prerequisites:**
 
@@ -93,10 +93,11 @@ serve OSM notes as WMS layers.
 
 **GeoServer Permissions:**
 
-The user specified in `GEOSERVER_USER` must have **ADMIN role** in GeoServer to
-perform the following operations via REST API:
+The user specified in `GEOSERVER_USER` must have **ADMIN role** in GeoServer to perform the
+following operations via REST API:
 
 **Required Operations:**
+
 - **Workspaces**: Create, read, update, delete
 - **Namespaces**: Create, read, update, delete
 - **Datastores**: Create, read, update, delete
@@ -105,16 +106,19 @@ perform the following operations via REST API:
 - **Styles**: Create, read, update, delete (global resources)
 
 **GeoServer Roles:**
+
 - **ADMIN**: Full access to all operations (required for this script)
 - **ADMIN_WORKSPACE**: Can manage specific workspace only (not sufficient)
 - **ADMIN_DATA**: Can manage data stores and layers (not sufficient for workspaces/namespaces)
 - **ADMIN_STYLE**: Can manage styles only (not sufficient)
 
 **Default Credentials:**
+
 - Default GeoServer admin user: `admin` / `geoserver`
 - **Important**: Change default credentials in production!
 
 **Configuring GeoServer User:**
+
 1. Access GeoServer web interface: `http://localhost:8080/geoserver/web`
 2. Navigate to: Security → Users, Groups, Roles
 3. Verify user has ADMIN role assigned
@@ -125,10 +129,11 @@ perform the following operations via REST API:
 
 **Database Configuration:**
 
-**IMPORTANT**: `geoserverConfig.sh` requires database credentials (user and password)
-because GeoServer connects to PostgreSQL via TCP/IP and cannot use peer authentication.
+**IMPORTANT**: `geoserverConfig.sh` requires database credentials (user and password) because
+GeoServer connects to PostgreSQL via TCP/IP and cannot use peer authentication.
 
 **Required Configuration in `etc/wms.properties.sh`:**
+
 ```bash
 # Database user for GeoServer (read-only permissions)
 WMS_DBUSER="geoserver"  # or use GEOSERVER_DBUSER
@@ -137,15 +142,15 @@ WMS_DBHOST="localhost"  # or remote host if GeoServer is on different server
 WMS_DBPORT="5432"  # PostgreSQL port
 ```
 
-**Note**: Unlike `wmsManager.sh` which can use peer authentication, `geoserverConfig.sh`
-always requires a password because it configures GeoServer's datastore, and GeoServer
-runs as a Java process that cannot use peer authentication.
+**Note**: Unlike `wmsManager.sh` which can use peer authentication, `geoserverConfig.sh` always
+requires a password because it configures GeoServer's datastore, and GeoServer runs as a Java
+process that cannot use peer authentication.
 
 **Database Permissions:**
 
-Before running `geoserverConfig.sh`, you must grant read-only permissions to the
-`geoserver` database user. This user is used by GeoServer to access WMS data with
-read-only privileges (principle of least privilege):
+Before running `geoserverConfig.sh`, you must grant read-only permissions to the `geoserver`
+database user. This user is used by GeoServer to access WMS data with read-only privileges
+(principle of least privilege):
 
 ```bash
 # Execute as database owner (angoca) or postgres superuser
@@ -153,6 +158,7 @@ psql -d notes -f sql/wms/grantGeoserverPermissions.sql
 ```
 
 This script will:
+
 - Create the `geoserver` database user if it doesn't exist
 - Grant CONNECT privilege on the `notes` database
 - Grant USAGE on `public` and `wms` schemas
@@ -160,9 +166,9 @@ This script will:
 - Grant SELECT on the `countries` table
 - Set default privileges for future tables in the `wms` schema
 
-**Security Note:** The `geoserver` database user has read-only permissions only,
-which is appropriate for WMS data access. The GeoServer admin user (different
-from the database user) needs ADMIN role to configure GeoServer itself.
+**Security Note:** The `geoserver` database user has read-only permissions only, which is
+appropriate for WMS data access. The GeoServer admin user (different from the database user) needs
+ADMIN role to configure GeoServer itself.
 
 **Usage:**
 
@@ -190,8 +196,7 @@ from the database user) needs ADMIN role to configure GeoServer itself.
 - `--geoserver-user USER`: GeoServer admin username
 - `--geoserver-pass PASS`: GeoServer admin password
 
-**Configuration:**
-The script automatically uses WMS properties from `etc/wms.properties.sh`:
+**Configuration:** The script automatically uses WMS properties from `etc/wms.properties.sh`:
 
 - Database connection settings
 - GeoServer access configuration
@@ -225,6 +230,7 @@ The script automatically uses WMS properties from `etc/wms.properties.sh`:
    ```
 
 **User Privileges Summary:**
+
 - **User 'notes'**: Elevated privileges (CREATE, ALTER, etc.) - used by `wmsManager.sh`
 - **User 'geoserver'**: Read-only permissions (SELECT) - used by `geoserverConfig.sh` and GeoServer
 
@@ -233,12 +239,14 @@ The script automatically uses WMS properties from `etc/wms.properties.sh`:
 When you run `geoserverConfig.sh install`, the following objects are created in GeoServer:
 
 ### 1. **Workspace**
+
 - **Name**: `osm_notes` (configurable via `GEOSERVER_WORKSPACE`)
 - **Type**: Workspace
 - **Purpose**: Organizes all WMS layers for OSM notes
 - **Location**: GeoServer → Data → Workspaces
 
 ### 2. **Namespace**
+
 - **Prefix**: `osm_notes` (same as workspace name)
 - **URI**: `urn:osm-notes-profile` (configurable via `GEOSERVER_NAMESPACE`)
 - **Type**: Namespace
@@ -246,6 +254,7 @@ When you run `geoserverConfig.sh install`, the following objects are created in 
 - **Location**: GeoServer → Data → Namespaces
 
 ### 3. **Datastore**
+
 - **Name**: `notes_wms` (configurable via `GEOSERVER_STORE`)
 - **Type**: PostGIS
 - **Purpose**: Connection to PostgreSQL database containing WMS data
@@ -257,6 +266,7 @@ When you run `geoserverConfig.sh install`, the following objects are created in 
 - **Location**: GeoServer → Data → Stores → `osm_notes:notes_wms`
 
 ### 4. **Feature Type (Layer)**
+
 - **Name**: `notes_wms_layer` (configurable via `GEOSERVER_LAYER`)
 - **Native Name**: `notes_wms` (table name in database)
 - **Type**: Feature Type
@@ -266,13 +276,17 @@ When you run `geoserverConfig.sh install`, the following objects are created in 
 - **Location**: GeoServer → Data → Layers → `osm_notes:notes_wms_layer`
 
 ### 5. **Style (SLD)**
-- **Name**: `osm_notes_style` (configurable via `WMS_STYLE_NAME`, defaults to `OpenNotes` if not set)
+
+- **Name**: `osm_notes_style` (configurable via `WMS_STYLE_NAME`, defaults to `OpenNotes` if not
+  set)
 - **Type**: SLD (Styled Layer Descriptor)
 - **Purpose**: Defines how the layer is rendered (colors, symbols, etc.)
 - **File**: `sld/OpenNotes.sld` (configurable via `WMS_STYLE_FILE` or `WMS_STYLE_OPEN_FILE`)
 - **Location**: GeoServer → Styles → `osm_notes_style` (or `OpenNotes`)
 
-**Note**: The style is automatically assigned to the layer as the default style. The style name comes from `WMS_STYLE_NAME` (default: `osm_notes_style`), and the file comes from `WMS_STYLE_FILE` (default: `sld/OpenNotes.sld`).
+**Note**: The style is automatically assigned to the layer as the default style. The style name
+comes from `WMS_STYLE_NAME` (default: `osm_notes_style`), and the file comes from `WMS_STYLE_FILE`
+(default: `sld/OpenNotes.sld`).
 
 ### Accessing the WMS Service
 
@@ -280,7 +294,8 @@ After installation, the WMS service is available at:
 
 - **WMS URL**: `http://localhost:8080/geoserver/wms` (or your GeoServer URL)
 - **Layer Name**: `osm_notes:notes_wms_layer`
-- **GetCapabilities**: `http://localhost:8080/geoserver/wms?service=WMS&version=1.1.0&request=GetCapabilities`
+- **GetCapabilities**:
+  `http://localhost:8080/geoserver/wms?service=WMS&version=1.1.0&request=GetCapabilities`
 
 ### Verifying Objects Were Created
 
@@ -346,37 +361,46 @@ You can view all created objects in the GeoServer web interface:
    - **Styles**: Styles → Look for `osm_notes_style` or `OpenNotes`
 
 **Direct Links** (after logging in, replace `localhost:8080` with your GeoServer host:port):
-- Workspaces: `http://localhost:8080/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.data.workspace.WorkspacePage`
-- Stores: `http://localhost:8080/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.data.store.DataStoresPage`
-- Layers: `http://localhost:8080/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.data.layers.LayersPage`
-- Styles: `http://localhost:8080/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.data.style.StylesPage`
+
+- Workspaces:
+  `http://localhost:8080/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.data.workspace.WorkspacePage`
+- Stores:
+  `http://localhost:8080/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.data.store.DataStoresPage`
+- Layers:
+  `http://localhost:8080/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.data.layers.LayersPage`
+- Styles:
+  `http://localhost:8080/geoserver/web/?wicket:bookmarkablePage=:org.geoserver.web.data.style.StylesPage`
 
 #### Troubleshooting: Objects Not Visible
 
 If you don't see the objects in the web interface:
 
 1. **Check if installation actually succeeded**:
+
    ```bash
    ./bin/wms/geoserverConfig.sh status
    ```
 
 2. **Verify GeoServer URL is correct**:
+
    ```bash
    echo $GEOSERVER_URL
    # Should match your actual GeoServer URL (e.g., http://localhost:8080/geoserver)
    ```
 
 3. **Verify credentials are loaded correctly**:
-   
-   The script loads credentials from `etc/wms.properties.sh` (created from `etc/wms.properties.sh.example`). Make sure your credentials are set there:
-   
+
+   The script loads credentials from `etc/wms.properties.sh` (created from
+   `etc/wms.properties.sh.example`). Make sure your credentials are set there:
+
    ```bash
    # Check current credentials in properties file
    grep GEOSERVER_USER etc/wms.properties.sh
    grep GEOSERVER_PASSWORD etc/wms.properties.sh
    ```
-   
+
    Or set them as environment variables:
+
    ```bash
    export GEOSERVER_USER=admin
    export GEOSERVER_PASSWORD=your_password
@@ -384,6 +408,7 @@ If you don't see the objects in the web interface:
    ```
 
 4. **Check REST API directly**:
+
    ```bash
    # Using credentials from properties file
    source etc/wms.properties.sh
@@ -392,6 +417,7 @@ If you don't see the objects in the web interface:
    ```
 
 5. **Verify credentials work**:
+
    ```bash
    source etc/wms.properties.sh
    curl -u "${GEOSERVER_USER}:${GEOSERVER_PASSWORD}" \
@@ -405,11 +431,17 @@ If you don't see the objects in the web interface:
    ```
 
 **Common Issues:**
-- **HTTP 401 (Unauthorized)**: Credentials are incorrect. Check `etc/wms.properties.sh` (created from `etc/wms.properties.sh.example`) or set environment variables.
-- **HTTP 404 (Not Found)**: GeoServer URL is incorrect. Verify `GEOSERVER_URL` matches your actual GeoServer installation.
-- **HTTP 409 (Conflict)**: Object already exists. This is normal if you're re-running the installation.
-- **HTTP 500 (Internal Server Error)**: GeoServer encountered an error. Check GeoServer logs for details.
-- **Objects not visible**: Installation may have failed silently. The script now shows HTTP codes and error messages for each operation.
+
+- **HTTP 401 (Unauthorized)**: Credentials are incorrect. Check `etc/wms.properties.sh` (created
+  from `etc/wms.properties.sh.example`) or set environment variables.
+- **HTTP 404 (Not Found)**: GeoServer URL is incorrect. Verify `GEOSERVER_URL` matches your actual
+  GeoServer installation.
+- **HTTP 409 (Conflict)**: Object already exists. This is normal if you're re-running the
+  installation.
+- **HTTP 500 (Internal Server Error)**: GeoServer encountered an error. Check GeoServer logs for
+  details.
+- **Objects not visible**: Installation may have failed silently. The script now shows HTTP codes
+  and error messages for each operation.
 
 **Testing with Public GeoServer URL:**
 
@@ -422,7 +454,8 @@ export GEOSERVER_PASSWORD="your_password"
 ./bin/wms/geoserverConfig.sh install
 ```
 
-The script will now show detailed error messages including HTTP status codes and API responses if creation fails.
+The script will now show detailed error messages including HTTP status codes and API responses if
+creation fails.
 
 3. **Verify configuration:**
 

@@ -1,13 +1,14 @@
 # WMS User Guide
 
-> **Note:** For technical WMS documentation (installation, configuration, administration), see [WMS_Guide.md](./WMS_Guide.md).  
+> **Note:** For technical WMS documentation (installation, configuration, administration), see
+> [WMS_Guide.md](./WMS_Guide.md).  
 > For system architecture overview, see [README.md](../README.md).
 
 ## What is WMS?
 
-WMS (Web Map Service) is a way to view OSM notes on a map. Think of it as a
-special layer that shows you where people have left notes about mapping issues,
-just like you might leave a sticky note on a map.
+WMS (Web Map Service) is a way to view OSM notes on a map. Think of it as a special layer that shows
+you where people have left notes about mapping issues, just like you might leave a sticky note on a
+map.
 
 ### Why Use WMS?
 
@@ -28,7 +29,8 @@ The color intensity tells you how old the note is:
 - **Darker colors**: Older notes
 - **Lighter colors**: Newer notes
 
-> **Technical Details:** For information about WMS layer configuration, styling, and server setup, see [WMS_Guide.md](./WMS_Guide.md).
+> **Technical Details:** For information about WMS layer configuration, styling, and server setup,
+> see [WMS_Guide.md](./WMS_Guide.md).
 
 ## Getting Started
 
@@ -86,19 +88,19 @@ Before you can use the WMS layer, you need:
 
 #### Open Notes (Red Dots)
 
-| Color | Meaning | Priority |
-|-------|---------|----------|
-| **Dark Red** | Recently opened (last few days) | High - Check soon |
-| **Medium Red** | Open for a few weeks | Medium - Plan to address |
-| **Light Red** | Open for months | Low - May need special attention |
+| Color          | Meaning                         | Priority                         |
+| -------------- | ------------------------------- | -------------------------------- |
+| **Dark Red**   | Recently opened (last few days) | High - Check soon                |
+| **Medium Red** | Open for a few weeks            | Medium - Plan to address         |
+| **Light Red**  | Open for months                 | Low - May need special attention |
 
 #### Closed Notes (Green Dots)
 
-| Color | Meaning | Information |
-|-------|---------|-------------|
-| **Dark Green** | Recently closed | Recently resolved |
+| Color            | Meaning              | Information         |
+| ---------------- | -------------------- | ------------------- |
+| **Dark Green**   | Recently closed      | Recently resolved   |
 | **Medium Green** | Closed some time ago | Previously resolved |
-| **Light Green** | Closed long ago | Historical data |
+| **Light Green**  | Closed long ago      | Historical data     |
 
 ### Spatial Patterns
 
@@ -374,7 +376,8 @@ Before you can use the WMS layer, you need:
 
 ### Documentation
 
-- **Complete WMS Guide**: See `docs/WMS_Guide.md` for technical details, administration, and deployment
+- **Complete WMS Guide**: See `docs/WMS_Guide.md` for technical details, administration, and
+  deployment
 
 ### Community Support
 
@@ -409,6 +412,5 @@ We welcome your feedback to improve this guide:
 
 ---
 
-*This guide is designed to help you make the most of the WMS layer for OSM notes.
-Remember, the goal is to make mapping more efficient and collaborative by
-visualizing where attention is needed.*
+_This guide is designed to help you make the most of the WMS layer for OSM notes. Remember, the goal
+is to make mapping more efficient and collaborative by visualizing where attention is needed._

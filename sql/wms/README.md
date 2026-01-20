@@ -1,38 +1,32 @@
-
 # Configure Notes WMS
 
-Notes WMS is a layer service that locates the open and closed notes on a map.
-This layer can be included in JOSM or Vespucci to easily locate notes, and
-process them by location.
-By having the location of notes from a wide perspective, one can zoom in on
-the areas where the notes are still open.
-This service does not provide a lot of zoom detail, because it is only
-necessary to have a rough idea of where open notes are located.
+Notes WMS is a layer service that locates the open and closed notes on a map. This layer can be
+included in JOSM or Vespucci to easily locate notes, and process them by location. By having the
+location of notes from a wide perspective, one can zoom in on the areas where the notes are still
+open. This service does not provide a lot of zoom detail, because it is only necessary to have a
+rough idea of where open notes are located.
 
-As part of the service, it also locates closed notes.
-This allows us to identify areas where many notes have been opened, and imagine
-the reason why.
+As part of the service, it also locates closed notes. This allows us to identify areas where many
+notes have been opened, and imagine the reason why.
 
-This service uses the OSM Notes ingestion system, which maintains an updated set
-of notes (open and closed).
-To make WMS work some changes on the database are necessary, to copy just
-the necessary values into another table, with the geometry already created.
-This speeds up the queries for the WMS, without impacting the notes base table.
+This service uses the OSM Notes ingestion system, which maintains an updated set of notes (open and
+closed). To make WMS work some changes on the database are necessary, to copy just the necessary
+values into another table, with the geometry already created. This speeds up the queries for the
+WMS, without impacting the notes base table.
 
-Then, it is necessary to configure GeoServer (which only needs to be downloaded)
-and the basic configuration is explained here.
+Then, it is necessary to configure GeoServer (which only needs to be downloaded) and the basic
+configuration is explained here.
 
-The layer is configured with a style (SLD file) that changes the color of the
-note according to its age.
-When open notes, the older the darker the note, meaning it has less value than
-recently open notes.
-When closed notes, the lighter the older, meaning it was processed long before.
+The layer is configured with a style (SLD file) that changes the color of the note according to its
+age. When open notes, the older the darker the note, meaning it has less value than recently open
+notes. When closed notes, the lighter the older, meaning it was processed long before.
 
 ## Installation
 
 ### Schema Verification (Recommended First Step)
 
-Before installing WMS components, verify that your database schema matches the expected schema from OSM-Notes-Ingestion:
+Before installing WMS components, verify that your database schema matches the expected schema from
+OSM-Notes-Ingestion:
 
 ```bash
 # Verify database schema compatibility
@@ -40,12 +34,14 @@ psql -d notes -f sql/wms/verifySchema.sql
 ```
 
 This script checks:
+
 - PostGIS extension installation
 - Required columns in `notes` table
 - Existence of `countries` table
 - Data availability
 
-If verification fails, ensure you have the correct version of OSM-Notes-Ingestion installed and that the database has been properly populated.
+If verification fails, ensure you have the correct version of OSM-Notes-Ingestion installed and that
+the database has been properly populated.
 
 ### Automated Installation (Recommended)
 
@@ -88,10 +84,9 @@ For manual installation, follow these steps:
 ALTER USER myuser WITH PASSWORD 'mypassword';
 ```
 
-- Change the database configuration to allow remote connections.
-This link could be useful:
-<https://www.bigbinary.com/blog/configure-postgresql-to-allow-remote-connection>
-Also, you can find the configuration file with this:
+- Change the database configuration to allow remote connections. This link could be useful:
+  <https://www.bigbinary.com/blog/configure-postgresql-to-allow-remote-connection> Also, you can
+  find the configuration file with this:
 
 ```text
 find / -name "postgresql.conf" 2> /dev/null
@@ -120,9 +115,8 @@ host    all             all              0.0.0.0/0                       md5
 host    all             all              ::/0                            md5
 ```
 
-- Execute the necessary SQLs to adapt the database to synchronize with this
-service.
-Let's suppose the Postgres database is called `notes`.
+- Execute the necessary SQLs to adapt the database to synchronize with this service. Let's suppose
+  the Postgres database is called `notes`.
 
 ```text
 psql -d "notes" -v ON_ERROR_STOP=1 -f "prepareDatabase.sql"
@@ -130,8 +124,7 @@ psql -d "notes" -v ON_ERROR_STOP=1 -f "prepareDatabase.sql"
 
 ## Geoserver configuration
 
-Configure the GeoServer to publish the layer from the database, following
-these instructions.
+Configure the GeoServer to publish the layer from the database, following these instructions.
 
 ### Contact Information
 
@@ -198,9 +191,9 @@ SLD files are under the `sld` directory.
 
 ### Layers
 
-__Open Notes__
+**Open Notes**
 
-__On Data tab:__
+**On Data tab:**
 
 Add layer from OSM_Notes:OSM_Notes_DS.
 
@@ -210,9 +203,9 @@ Configure new SQL view...
 - SQL Statement:
 
 ```text
-SELECT /* Notes-WMS */ 
-  year_created_at, 
-  year_closed_at, 
+SELECT /* Notes-WMS */
+  year_created_at,
+  year_closed_at,
   id_country,
   country_shape_mod,
   geometry
@@ -231,8 +224,8 @@ For each layer.
 
 #### Basic Resource Info
 
-- Abstract: This layer shows the location of the currently open notes.
-The color intensity shows the age of the creation time.
+- Abstract: This layer shows the location of the currently open notes. The color intensity shows the
+  age of the creation time.
 
 #### Coordinate Reference Systems
 
@@ -243,7 +236,7 @@ The color intensity shows the age of the creation time.
 - Compute from SRS bounds
 - Compute from native bounds
 
-__On the Publishing tab:__
+**On the Publishing tab:**
 
 #### WMS Settings - Layers Settings
 
@@ -254,7 +247,7 @@ __On the Publishing tab:__
 - Attribution Text: OpenStreetMap contributors
 - Attribution Link: <https://www.openstreetmap.org/copyright>
 
-__On the Tile Caching tab:__
+**On the Tile Caching tab:**
 
 #### Tile cache configuration
 
@@ -264,9 +257,9 @@ __On the Tile Caching tab:__
 - Gridset:
   - Published zoom levels: 0 - 8
 
-__Closed Notes__
+**Closed Notes**
 
-__On the Data tab:__
+**On the Data tab:**
 
 Layer from OSM_Notes:OSM_Notes_DS.
 
@@ -274,9 +267,9 @@ Layer from OSM_Notes:OSM_Notes_DS.
 - SQL Statement:
 
 ```text
-SELECT /* Notes-WMS */ 
-  year_created_at, 
-  year_closed_at, 
+SELECT /* Notes-WMS */
+  year_created_at,
+  year_closed_at,
   id_country,
   country_shape_mod,
   geometry
@@ -287,10 +280,10 @@ ORDER BY year_created_at DESC
 
 #### Basic Resource Info
 
-- Abstract: This layer shows the location of the closed notes.
-The color intensity shows the age of the creation time.
+- Abstract: This layer shows the location of the closed notes. The color intensity shows the age of
+  the creation time.
 
-__On the Publishing tab:__
+**On the Publishing tab:**
 
 #### WMS Settings - Layers Settings
 
@@ -298,11 +291,11 @@ __On the Publishing tab:__
 
 The other options the same as for open notes.
 
-__Disputed and Unclaimed Areas__
+**Disputed and Unclaimed Areas**
 
-This layer uses a __materialized view__ because the query is computationally
-expensive (ST_Union over all countries, ST_Difference operations). The view is
-automatically refreshed when `updateCountries.sh` runs (typically monthly).
+This layer uses a **materialized view** because the query is computationally expensive (ST_Union
+over all countries, ST_Difference operations). The view is automatically refreshed when
+`updateCountries.sh` runs (typically monthly).
 
 To manually refresh the view:
 
@@ -316,7 +309,7 @@ Or using SQL:
 REFRESH MATERIALIZED VIEW CONCURRENTLY wms.disputed_and_unclaimed_areas;
 ```
 
-__On the Data tab:__
+**On the Data tab:**
 
 Layer from OSM_Notes:OSM_Notes_DS.
 
@@ -334,11 +327,11 @@ ORDER BY zone_type, id
 
 #### Basic Resource Info
 
-- Abstract: This layer shows disputed areas (overlapping countries) and
-  unclaimed areas (gaps between countries). The view is automatically refreshed
-  monthly when country boundaries are updated.
+- Abstract: This layer shows disputed areas (overlapping countries) and unclaimed areas (gaps
+  between countries). The view is automatically refreshed monthly when country boundaries are
+  updated.
 
-__On the Publishing tab:__
+**On the Publishing tab:**
 
 #### WMS Settings - Layers Settings
 
@@ -346,11 +339,10 @@ __On the Publishing tab:__
 
 The other options the same as for open notes.
 
-__Note__: Disputed areas are shown in red, unclaimed areas in yellow. Maritime
-zones (those with parentheses in name, e.g., "Colombia (200nm EEZ)") are excluded
-from both disputed and unclaimed areas calculation, as they can legitimately overlap
-with countries and each other (EEZ zones) and are intentionally not claimed
-(international waters).
+**Note**: Disputed areas are shown in red, unclaimed areas in yellow. Maritime zones (those with
+parentheses in name, e.g., "Colombia (200nm EEZ)") are excluded from both disputed and unclaimed
+areas calculation, as they can legitimately overlap with countries and each other (EEZ zones) and
+are intentionally not claimed (international waters).
 
 ### Disk Quota
 
@@ -387,25 +379,23 @@ with countries and each other (EEZ zones) and are intentionally not claimed
 Under `sld`:
 
 - `ClosedNotes.sld` QGIS generated file for WMS style on closed notes.
-- `CountriesAndMaritimes.sld` QGIS generated file for WMS style on countries
-  and maritimes areas.
-- `DisputedAndUnclaimedAreas.sld` SLD file for WMS style on disputed and
-  unclaimed areas (red for disputed, yellow for unclaimed)
-- `refreshDisputedAreasView.sql` SQL script to refresh the materialized view
-  (automatically called by `updateCountries.sh`)
+- `CountriesAndMaritimes.sld` QGIS generated file for WMS style on countries and maritimes areas.
+- `DisputedAndUnclaimedAreas.sld` SLD file for WMS style on disputed and unclaimed areas (red for
+  disputed, yellow for unclaimed)
+- `refreshDisputedAreasView.sql` SQL script to refresh the materialized view (automatically called
+  by `updateCountries.sh`)
 - `OpenNotes.sld` QGIS generated file for WMS style on open notes.
 
 Under `sql/wms`
 
-- `verifySchema.sql` SQL script to verify that the database schema matches
-  the expected schema from OSM-Notes-Ingestion. Run this before installation
-  to ensure compatibility. See [Schema Verification](#schema-verification-recommended-first-step) above.
-- `prepareDatabase.sql` All the necessary scripts to synchronize the OSM
-  Notes ingestion system with this Notes WMS layer service. This includes
-  creating the `wms.notes_wms` table and the `wms.disputed_and_unclaimed_areas`
-  materialized view.
-- `refreshDisputedAreasView.sql` SQL script to refresh the materialized view
-  for disputed and unclaimed areas (automatically called by `updateCountries.sh`).
+- `verifySchema.sql` SQL script to verify that the database schema matches the expected schema from
+  OSM-Notes-Ingestion. Run this before installation to ensure compatibility. See
+  [Schema Verification](#schema-verification-recommended-first-step) above.
+- `prepareDatabase.sql` All the necessary scripts to synchronize the OSM Notes ingestion system with
+  this Notes WMS layer service. This includes creating the `wms.notes_wms` table and the
+  `wms.disputed_and_unclaimed_areas` materialized view.
+- `refreshDisputedAreasView.sql` SQL script to refresh the materialized view for disputed and
+  unclaimed areas (automatically called by `updateCountries.sh`).
 - `removeFromDatabase.sql` Removes the Notes WMS part from the database.
-- `grantGeoserverPermissions.sql` Grants read-only permissions to the `geoserver`
-  user for accessing WMS data.
+- `grantGeoserverPermissions.sql` Grants read-only permissions to the `geoserver` user for accessing
+  WMS data.

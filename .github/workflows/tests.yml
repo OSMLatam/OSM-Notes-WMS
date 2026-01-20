@@ -7,9 +7,55 @@ on:
     branches: [ main, master, develop ]
 
 jobs:
+  formatting:
+    name: Code Formatting Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install shfmt
+        run: |
+          wget -q -O shfmt https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_linux_amd64
+          chmod +x shfmt
+          sudo mv shfmt /usr/local/bin/
+
+      - name: Check bash formatting with shfmt
+        run: |
+          echo "Checking bash code formatting..."
+          find bin tests -name "*.sh" -type f -exec shfmt -d {} \;
+
+      - name: Install SQLFluff
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sqlfluff || pip3 install sqlfluff
+
+      - name: Check SQL formatting
+        continue-on-error: true
+        run: |
+          if command -v sqlfluff &> /dev/null; then
+            find sql -name "*.sql" -type f -exec sqlfluff lint {} \; || echo "SQL formatting issues found (non-blocking)"
+          fi
+
+      - name: Setup Node.js for Prettier
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Prettier
+        run: npm install -g prettier
+
+      - name: Check formatting with Prettier
+        continue-on-error: true
+        run: |
+          prettier --check "**/*.{md,json,yaml,yml,css,html}" --ignore-path .prettierignore 2>/dev/null || echo "Prettier formatting issues found (non-blocking)"
+
   test:
     runs-on: ubuntu-latest
-    
+    needs: formatting
+
     services:
       postgres:
         image: postgis/postgis:15-3.3

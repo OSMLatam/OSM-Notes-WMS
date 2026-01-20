@@ -6,11 +6,10 @@ This directory contains configuration files for the OSM-Notes-WMS project.
 
 ### `wms.properties.sh.example`
 
-Template configuration file for WMS system. This file contains all configuration
-options with default values and detailed comments.
+Template configuration file for WMS system. This file contains all configuration options with
+default values and detailed comments.
 
-**Important**: This file is tracked in Git. Create a copy for your actual
-configuration:
+**Important**: This file is tracked in Git. Create a copy for your actual configuration:
 
 ```bash
 # Copy the example file
@@ -23,11 +22,11 @@ chmod 600 etc/wms.properties.sh
 vi etc/wms.properties.sh
 ```
 
-Then edit `wms.properties.sh` with your actual settings. The file
-`wms.properties.sh` should not be committed to Git (it's in .gitignore) as it
-may contain sensitive information like passwords.
+Then edit `wms.properties.sh` with your actual settings. The file `wms.properties.sh` should not be
+committed to Git (it's in .gitignore) as it may contain sensitive information like passwords.
 
 **Security Notes:**
+
 - Never commit `wms.properties.sh` to Git (it's in .gitignore)
 - Use `chmod 600` to restrict file permissions
 - Edit credentials locally on each server
@@ -48,7 +47,5 @@ The properties file includes the following configuration sections:
 
 ## Environment Variables
 
-All configuration values can be overridden using environment variables. See the
-example file for variable names and usage.
-
-
+All configuration values can be overridden using environment variables. See the example file for
+variable names and usage.

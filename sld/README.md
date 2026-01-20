@@ -2,10 +2,9 @@
 
 ## Overview
 
-The `sld` directory contains Styled Layer Descriptor (SLD) files that define the
-visual styling and cartographic representation of OSM notes data in web mapping
-applications. These files control how notes are displayed on maps with different
-visual styles for different note states.
+The `sld` directory contains Styled Layer Descriptor (SLD) files that define the visual styling and
+cartographic representation of OSM notes data in web mapping applications. These files control how
+notes are displayed on maps with different visual styles for different note states.
 
 ## Directory Structure
 
@@ -69,19 +68,22 @@ These SLD files are used by web mapping applications to:
 
 ### Default Styles
 
-The default styles (`OpenNotes.sld` and `ClosedNotes.sld`) are automatically
-assigned to the `notesopen` and `notesclosed` layers in GeoServer. They use
-dynamic age calculation, so no manual updates are required each year.
+The default styles (`OpenNotes.sld` and `ClosedNotes.sld`) are automatically assigned to the
+`notesopen` and `notesclosed` layers in GeoServer. They use dynamic age calculation, so no manual
+updates are required each year.
 
 Both styles include country-based differentiation:
+
 - Each country gets a distinct base color
-- Different shapes per country (triangle, circle, square, star, cross, x, plus, times, dot, open arrow, closed arrow, slash)
+- Different shapes per country (triangle, circle, square, star, cross, x, plus, times, dot, open
+  arrow, closed arrow, slash)
 - Shape is determined by `country_shape_mod` column (id_country % 12)
 - Notes without country (NULL) are shown in gray
 
 ## Dynamic Age Calculation
 
 All SLD files use dynamic age calculation from the database views:
+
 - Open notes use the `age_years` column (calculated as `CURRENT_YEAR - year_created_at`)
 - Closed notes use the `years_since_closed` column (calculated as `CURRENT_YEAR - year_closed_at`)
 
@@ -92,8 +94,10 @@ This means the styles automatically update each year without requiring manual SL
 The styles automatically differentiate notes by country:
 
 - **Color coding**: Each country gets a distinct base color based on its `id_country` value
-- **Shape coding**: Different geometric shapes (triangle, circle, square, star, cross, x, plus, times, dot, open arrow, closed arrow, slash) are assigned based on `id_country % 12`
-- **Age indication**: Color intensity still reflects note age (darker = older for open notes, lighter = older for closed notes)
+- **Shape coding**: Different geometric shapes (triangle, circle, square, star, cross, x, plus,
+  times, dot, open arrow, closed arrow, slash) are assigned based on `id_country % 12`
+- **Age indication**: Color intensity still reflects note age (darker = older for open notes,
+  lighter = older for closed notes)
 - **Unclaimed areas**: Notes without country assignment (NULL) are displayed in gray
 
 This is particularly useful in border areas where notes from different countries are close together.
