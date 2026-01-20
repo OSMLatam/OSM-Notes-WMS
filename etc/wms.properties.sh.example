@@ -99,9 +99,9 @@ WMS_BBOX_MINY="${WMS_BBOX_MINY:--90}"
 WMS_BBOX_MAXY="${WMS_BBOX_MAXY:-90}"
 
 # WMS Organization Information (from README)
-WMS_ORGANIZATION="${WMS_ORGANIZATION:-OSM LatAm}"
-WMS_ORGANIZATION_URL="${WMS_ORGANIZATION_URL:-https://osmlatam.org}"
-WMS_ORGANIZATION_WELCOME="${WMS_ORGANIZATION_WELCOME:-Set of layers provided by OpenStreetMap LatAm.}"
+WMS_ORGANIZATION="${WMS_ORGANIZATION:-OSM Notes}"
+WMS_ORGANIZATION_URL="${WMS_ORGANIZATION_URL:-https://github.com/OSM-Notes}"
+WMS_ORGANIZATION_WELCOME="${WMS_ORGANIZATION_WELCOME:-Set of layers provided by OSM Notes.}"
 
 # WMS Contact Information (from README)
 # Update these with your contact information

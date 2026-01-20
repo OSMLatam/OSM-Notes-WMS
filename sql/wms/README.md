@@ -137,9 +137,9 @@ these instructions.
 
 #### Organization
 
-- Organization: OSM LatAm
-- Online Resource: <https://osmlatam.org>
-- Welcome: Set of layers provided by OpenStreetMap LatAm.
+- Organization: OSM Notes
+- Online Resource: <https://github.com/OSM-Notes>
+- Welcome: Set of layers provided by OSM Notes.
 
 #### Primary Contact
 
