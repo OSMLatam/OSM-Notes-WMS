@@ -41,8 +41,24 @@ create_wms_test_database() {
   
   # Try to use processPlanetNotes.sh --base from Ingestion project if available
   # This creates the base tables with the correct schema as defined by OSM-Notes-Ingestion
-  local INGESTION_PROJECT="/home/angoca/github/OSM-Notes-Ingestion"
-  local PROCESS_PLANET_SCRIPT="${INGESTION_PROJECT}/bin/process/processPlanetNotes.sh"
+  # Try multiple possible locations for the Ingestion project
+  local INGESTION_PROJECT=""
+  local PROCESS_PLANET_SCRIPT=""
+  
+  # Try workspace-relative path first
+  if [[ -f "../OSM-Notes-Ingestion/bin/process/processPlanetNotes.sh" ]]; then
+    INGESTION_PROJECT="$(cd ../OSM-Notes-Ingestion && pwd)"
+  # Try absolute path (user's home)
+  elif [[ -f "/home/angoca/github/OSM-Notes/OSM-Notes-Ingestion/bin/process/processPlanetNotes.sh" ]]; then
+    INGESTION_PROJECT="/home/angoca/github/OSM-Notes/OSM-Notes-Ingestion"
+  # Try environment variable if set
+  elif [[ -n "${OSM_NOTES_INGESTION_ROOT:-}" ]] && [[ -f "${OSM_NOTES_INGESTION_ROOT}/bin/process/processPlanetNotes.sh" ]]; then
+    INGESTION_PROJECT="${OSM_NOTES_INGESTION_ROOT}"
+  fi
+  
+  if [[ -n "${INGESTION_PROJECT}" ]]; then
+    PROCESS_PLANET_SCRIPT="${INGESTION_PROJECT}/bin/process/processPlanetNotes.sh"
+  fi
   
   if [[ -f "${PROCESS_PLANET_SCRIPT}" ]] && [[ -x "${PROCESS_PLANET_SCRIPT}" ]]; then
     echo "Using processPlanetNotes.sh --base from Ingestion project to create base tables..."
