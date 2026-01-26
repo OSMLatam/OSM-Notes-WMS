@@ -541,6 +541,12 @@ done
   - Includes schema verification instructions and `verifySchema.sql` script
 - **[sld/README.md](./sld/README.md)**: Style files documentation
 
+## Architecture Decision Records
+
+Architecture Decision Records (ADRs) document important architectural decisions made in this project:
+- [View all ADRs](docs/adr/)
+- [Central ADR Index](https://github.com/OSM-Notes/OSM-Notes-Common/blob/main/docs/adr/README.md)
+
 ## Requirements
 
 For complete installation instructions, see **[Installation and Dependencies Guide](docs/Installation_Dependencies.md)**.
