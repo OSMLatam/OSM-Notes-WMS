@@ -1,3 +1,21 @@
+---
+title: "OSM-Notes-WMS"
+description: "Web Map Service (WMS) for OpenStreetMap Notes"
+version: "latest"
+last_updated: "2026-01-25"
+author: "AngocA"
+tags:
+  - "wms"
+  - "geoserver"
+  - "maps"
+audience:
+  - "mappers"
+  - "developers"
+  - "system-admins"
+project: "OSM-Notes-WMS"
+status: "active"
+---
+
 # OSM-Notes-WMS
 
 **Web Map Service (WMS) for OpenStreetMap Notes**
@@ -28,6 +46,18 @@ on a map. The service allows mappers to:
 - **Real-time Updates**: Synchronized with the main OSM notes database via triggers
 - **Country-based Styling**: Different colors and shapes per country for easy identification
 - **Standard Compliance**: OGC WMS 1.3.0 compliant service via GeoServer
+
+## 📚 Ecosystem Documentation
+
+For shared documentation of the complete ecosystem, see:
+
+- **[OSM Notes Ecosystem](https://github.com/OSM-Notes/OSM-Notes)** - Ecosystem landing page
+- **[Global Glossary](https://github.com/OSM-Notes/OSM-Notes-Common/blob/main/docs/GLOSSARY.md)** - Terms and definitions
+- **[Complete Installation Guide](https://github.com/OSM-Notes/OSM-Notes-Common/blob/main/docs/INSTALLATION.md)** - Step-by-step installation of all projects
+- **[End-to-End Data Flow](https://github.com/OSM-Notes/OSM-Notes-Common/blob/main/docs/DATA_FLOW.md)** - Complete data flow
+- **[Decision Guide](https://github.com/OSM-Notes/OSM-Notes-Common/blob/main/docs/DECISION_GUIDE.md)** - Which project do I need?
+
+---
 
 ## OSM-Notes Ecosystem
 
@@ -82,18 +112,55 @@ for all others. **This WMS project requires Ingestion** as it uses the same data
 
 ### Project Relationships
 
-```
-OSM Planet/API
-    ↓
-[OSM-Notes-Ingestion] ← Base project (REQUIRED for WMS)
-    ├─→ [OSM-Notes-Analytics] → ETL → Data Warehouse
-    │       ├─→ [OSM-Notes-Data] → JSON files (GitHub Pages)
-    │       │       └─→ [OSM-Notes-Viewer]
-    │       └─→ [OSM-Notes-API] → REST API
-    └─→ [OSM-Notes-WMS] → WMS layers (this project, uses same DB)
+```mermaid
+graph TB
+    subgraph External["External Sources"]
+        OSM[OSM Planet/API]
+    end
     
-[OSM-Notes-Monitoring] → Monitors all projects (including WMS)
-[OSM-Notes-Common] → Shared libraries (submodule, used by WMS)
+    subgraph Base["Base Project"]
+        INGESTION[OSM-Notes-Ingestion<br/>Base project<br/>REQUIRED for WMS]
+    end
+    
+    subgraph Processing["Processing Layer"]
+        ANALYTICS[OSM-Notes-Analytics<br/>ETL → Data Warehouse]
+        WMS[OSM-Notes-WMS<br/>WMS layers<br/>this project<br/>uses same DB]
+    end
+    
+    subgraph Delivery["Delivery Layer"]
+        DATA[OSM-Notes-Data<br/>JSON files<br/>GitHub Pages]
+        API[OSM-Notes-API<br/>REST API]
+        VIEWER[OSM-Notes-Viewer]
+    end
+    
+    subgraph Support["Support Layer"]
+        MONITORING[OSM-Notes-Monitoring<br/>Monitors all projects<br/>including WMS]
+        COMMON[OSM-Notes-Common<br/>Shared libraries<br/>submodule<br/>used by WMS]
+    end
+    
+    OSM -->|Downloads| INGESTION
+    INGESTION -->|Base Tables| ANALYTICS
+    INGESTION -->|Same Database| WMS
+    ANALYTICS -->|JSON Export| DATA
+    ANALYTICS -->|Data Warehouse| API
+    DATA -->|JSON Files| VIEWER
+    MONITORING -.->|Monitors| INGESTION
+    MONITORING -.->|Monitors| ANALYTICS
+    MONITORING -.->|Monitors| WMS
+    COMMON -.->|Used by| INGESTION
+    COMMON -.->|Used by| ANALYTICS
+    COMMON -.->|Used by| WMS
+    COMMON -.->|Used by| MONITORING
+    
+    style OSM fill:#ADD8E6
+    style INGESTION fill:#90EE90
+    style ANALYTICS fill:#FFFFE0
+    style WMS fill:#FFE4B5
+    style DATA fill:#E0F6FF
+    style API fill:#FFB6C1
+    style VIEWER fill:#DDA0DD
+    style MONITORING fill:#F0E68C
+    style COMMON fill:#D3D3D3
 ```
 
 ### Installation Order
@@ -113,18 +180,40 @@ When setting up the complete ecosystem, install projects in this order:
 
 ## Architecture
 
-```text
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│   OSM Notes     │     │   PostgreSQL     │     │    GeoServer    │
-│   Database      │───▶│   WMS Schema     │───▶│   WMS Service   │
-│  (from Ingestion)│     │   (wms.notes_wms)│     │                 │
-└─────────────────┘     └──────────────────┘     └─────────────────┘
-                                │                       │
-                                ▼                       ▼
-                       ┌─────────────────┐    ┌─────────────────┐
-                       │   Triggers &    │    │   JOSM/Vespucci │
-                       │   Functions     │    │   Applications  │
-                       └─────────────────┘    └─────────────────┘
+```mermaid
+graph LR
+    subgraph Ingestion["OSM Notes Database"]
+        DB[(PostgreSQL Database<br/>from Ingestion)]
+    end
+    
+    subgraph WMS["WMS Schema"]
+        WMS_SCHEMA[(WMS Schema<br/>wms.notes_wms)]
+        TRIGGERS[Triggers &<br/>Functions]
+    end
+    
+    subgraph GeoServer["GeoServer"]
+        GEOSERVER[WMS Service]
+    end
+    
+    subgraph Clients["Mapping Applications"]
+        JOSM[JOSM]
+        VESPUCCI[Vespucci]
+        QGIS[QGIS]
+    end
+    
+    DB -->|Reads from| WMS_SCHEMA
+    WMS_SCHEMA -->|Updates via| TRIGGERS
+    WMS_SCHEMA -->|Serves| GEOSERVER
+    GEOSERVER -->|WMS Layers| JOSM
+    GEOSERVER -->|WMS Layers| VESPUCCI
+    GEOSERVER -->|WMS Layers| QGIS
+    
+    style DB fill:#90EE90
+    style WMS_SCHEMA fill:#FFFFE0
+    style GEOSERVER fill:#FFE4B5
+    style JOSM fill:#E0F6FF
+    style VESPUCCI fill:#E0F6FF
+    style QGIS fill:#E0F6FF
 ```
 
 ## Recommended Reading Path

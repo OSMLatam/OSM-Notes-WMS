@@ -49,156 +49,171 @@ applications like JOSM or Vespucci.
 
 ### Architecture Overview
 
-```text
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│   OSM Notes     │     │   PostgreSQL     │     │    GeoServer    │
-│   Database      │───▶│   WMS Schema     │───▶│   WMS Service   │
-│                 │     │   (wms.notes_wms)│     │                 │
-└─────────────────┘     └──────────────────┘     └─────────────────┘
-                                │                       │
-                                ▼                       ▼
-                       ┌─────────────────┐    ┌─────────────────┐
-                       │   Triggers &    │    │   JOSM/Vespucci │
-                       │   Functions     │    │   Applications  │
-                       └─────────────────┘    └─────────────────┘
+```mermaid
+graph LR
+    subgraph Source["OSM Notes Database"]
+        DB[OSM Notes<br/>Database]
+    end
+    
+    subgraph Processing["PostgreSQL Processing"]
+        WMS_SCHEMA[PostgreSQL<br/>WMS Schema<br/>wms.notes_wms]
+        TRIGGERS[Triggers &<br/>Functions]
+    end
+    
+    subgraph Service["WMS Service"]
+        GEOSERVER[GeoServer<br/>WMS Service]
+    end
+    
+    subgraph Clients["WMS Clients"]
+        APPS[JOSM/Vespucci<br/>Applications]
+    end
+    
+    DB -->|Data| WMS_SCHEMA
+    WMS_SCHEMA -->|Processes| TRIGGERS
+    WMS_SCHEMA -->|Serves| GEOSERVER
+    GEOSERVER -->|WMS Protocol| APPS
+    
+    style DB fill:#90EE90
+    style WMS_SCHEMA fill:#FFFFE0
+    style GEOSERVER fill:#FFE4B5
+    style APPS fill:#DDA0DD
 ```
 
 ### Data Flow Diagram
 
-```text
-┌─────────────────────────────────────────────────────────────────┐
-│                    OSM Notes Ingestion Process                    │
-│  (OSM-Notes-Ingestion project populates public.notes table)     │
-└────────────────────────────┬────────────────────────────────────┘
-                             │
-                             ▼
-                    ┌─────────────────┐
-                    │  public.notes   │  ← Source table with note_id,
-                    │  public.countries│    longitude, latitude, etc.
-                    └────────┬─────────┘
-                             │
-                             │ Trigger: wms.insert_new_notes()
-                             ▼
-                    ┌─────────────────┐
-                    │  wms.notes_wms  │  ← Materialized table with
-                    │                  │    PostGIS geometry column
-                    └────────┬─────────┘
-                             │
-                             │ Materialized Views
-                             ▼
-        ┌────────────────────────────────────────────┐
-        │  wms.notes_open_view                        │
-        │  wms.notes_closed_view                      │  ← Views with calculated
-        │  wms.disputed_areas_view                    │    fields (age, etc.)
-        └────────┬────────────────────────────────────┘
-                 │
-                 │ GeoServer REST API
-                 ▼
-        ┌─────────────────┐
-        │   GeoServer     │  ← Creates feature types and layers
-        │   Datastore     │    from PostgreSQL views
-        └────────┬─────────┘
-                 │
-                 │ WMS Protocol (HTTP)
-                 ▼
-        ┌─────────────────┐
-        │  WMS Clients    │  ← JOSM, Vespucci, web maps
-        │  (JOSM/Vespucci)│
-        └─────────────────┘
+```mermaid
+flowchart TD
+    subgraph Ingestion["OSM Notes Ingestion Process"]
+        INGESTION[OSM-Notes-Ingestion<br/>Populates public.notes table]
+    end
+    
+    subgraph BaseTables["Base Tables"]
+        NOTES[public.notes<br/>public.countries<br/>Source table with note_id,<br/>longitude, latitude, etc.]
+    end
+    
+    subgraph WMSProcessing["WMS Processing"]
+        TRIGGER[Trigger:<br/>wms.insert_new_notes()]
+        WMS_TABLE[wms.notes_wms<br/>Materialized table with<br/>PostGIS geometry column]
+        VIEWS[Materialized Views<br/>wms.notes_open_view<br/>wms.notes_closed_view<br/>wms.disputed_areas_view<br/>Views with calculated fields]
+    end
+    
+    subgraph GeoServer["GeoServer"]
+        GEOSERVER[GeoServer Datastore<br/>Creates feature types and layers<br/>from PostgreSQL views]
+    end
+    
+    subgraph Clients["WMS Clients"]
+        WMS_CLIENTS[WMS Clients<br/>JOSM, Vespucci, web maps]
+    end
+    
+    INGESTION -->|Populates| NOTES
+    NOTES -->|Trigger| TRIGGER
+    TRIGGER -->|Creates| WMS_TABLE
+    WMS_TABLE -->|Materialized Views| VIEWS
+    VIEWS -->|GeoServer REST API| GEOSERVER
+    GEOSERVER -->|WMS Protocol HTTP| WMS_CLIENTS
+    
+    style INGESTION fill:#90EE90
+    style NOTES fill:#E0F6FF
+    style WMS_TABLE fill:#FFFFE0
+    style GEOSERVER fill:#FFE4B5
+    style WMS_CLIENTS fill:#DDA0DD
 ```
 
 ### Installation Process Flow
 
-```text
-┌─────────────────────────────────────────────────────────────────┐
-│                        Installation Flow                         │
-└─────────────────────────────────────────────────────────────────┘
-
-Step 1: Schema Verification
-    │
-    ├─▶ Run verifySchema.sql
-    │   ├─▶ Check PostGIS extension ✅
-    │   ├─▶ Verify notes table exists ✅
-    │   ├─▶ Validate required columns ✅
-    │   └─▶ Check countries table ✅
-    │
-    ▼
-Step 2: Database Setup
-    │
-    ├─▶ Run wmsManager.sh install
-    │   ├─▶ Create wms schema
-    │   ├─▶ Create wms.notes_wms table
-    │   ├─▶ Create materialized views
-    │   ├─▶ Create triggers for sync
-    │   └─▶ Populate initial data
-    │
-    ▼
-Step 3: GeoServer Configuration
-    │
-    ├─▶ Run geoserverConfig.sh install
-    │   ├─▶ Create workspace
-    │   ├─▶ Create datastore
-    │   ├─▶ Upload SLD styles
-    │   ├─▶ Create feature types
-    │   ├─▶ Create layers
-    │   └─▶ Assign styles to layers
-    │
-    ▼
-Step 4: Verification
-    │
-    ├─▶ Check WMS service
-    │   ├─▶ GetCapabilities request
-    │   ├─▶ GetMap request
-    │   └─▶ Verify layers visible
-    │
-    └─▶ ✅ Installation Complete
+```mermaid
+flowchart TD
+    START[Installation Flow] --> STEP1[Step 1: Schema Verification]
+    
+    STEP1 --> VERIFY[Run verifySchema.sql]
+    VERIFY --> CHECK1[Check PostGIS extension ✅]
+    VERIFY --> CHECK2[Verify notes table exists ✅]
+    VERIFY --> CHECK3[Validate required columns ✅]
+    VERIFY --> CHECK4[Check countries table ✅]
+    
+    CHECK1 --> STEP2[Step 2: Database Setup]
+    CHECK2 --> STEP2
+    CHECK3 --> STEP2
+    CHECK4 --> STEP2
+    
+    STEP2 --> WMS_MGR[Run wmsManager.sh install]
+    WMS_MGR --> CREATE1[Create wms schema]
+    WMS_MGR --> CREATE2[Create wms.notes_wms table]
+    WMS_MGR --> CREATE3[Create materialized views]
+    WMS_MGR --> CREATE4[Create triggers for sync]
+    WMS_MGR --> CREATE5[Populate initial data]
+    
+    CREATE1 --> STEP3[Step 3: GeoServer Configuration]
+    CREATE2 --> STEP3
+    CREATE3 --> STEP3
+    CREATE4 --> STEP3
+    CREATE5 --> STEP3
+    
+    STEP3 --> GEO_CONFIG[Run geoserverConfig.sh install]
+    GEO_CONFIG --> GEO1[Create workspace]
+    GEO_CONFIG --> GEO2[Create datastore]
+    GEO_CONFIG --> GEO3[Upload SLD styles]
+    GEO_CONFIG --> GEO4[Create feature types]
+    GEO_CONFIG --> GEO5[Create layers]
+    GEO_CONFIG --> GEO6[Assign styles to layers]
+    
+    GEO1 --> STEP4[Step 4: Verification]
+    GEO2 --> STEP4
+    GEO3 --> STEP4
+    GEO4 --> STEP4
+    GEO5 --> STEP4
+    GEO6 --> STEP4
+    
+    STEP4 --> VERIFY1[GetCapabilities request]
+    STEP4 --> VERIFY2[GetMap request]
+    STEP4 --> VERIFY3[Verify layers visible]
+    
+    VERIFY1 --> DONE[✅ Installation Complete]
+    VERIFY2 --> DONE
+    VERIFY3 --> DONE
+    
+    style START fill:#90EE90
+    style DONE fill:#90EE90
+    style STEP1 fill:#E0F6FF
+    style STEP2 fill:#E0F6FF
+    style STEP3 fill:#E0F6FF
+    style STEP4 fill:#E0F6FF
 ```
 
 ### Component Interaction Diagram
 
-```text
-┌──────────────────────────────────────────────────────────────────┐
-│                    Component Interaction                         │
-└──────────────────────────────────────────────────────────────────┘
-
-┌──────────────┐         ┌──────────────┐         ┌──────────────┐
-│   wmsManager │────────▶│  PostgreSQL  │◀────────│  GeoServer   │
-│     .sh      │  SQL    │   Database   │  Query  │   Config     │
-└──────────────┘         └──────┬───────┘         └──────┬───────┘
-                                │                        │
-                                │                        │
-                    ┌───────────▼───────────┐            │
-                    │                       │            │
-                    │  ┌─────────────────┐  │            │
-                    │  │  wms schema     │  │            │
-                    │  │  - notes_wms    │  │            │
-                    │  │  - views        │  │            │
-                    │  │  - triggers     │  │            │
-                    │  └─────────────────┘  │            │
-                    │                       │            │
-                    │  ┌─────────────────┐  │            │
-                    │  │  public schema   │  │            │
-                    │  │  - notes        │  │            │
-                    │  │  - countries    │  │            │
-                    │  └─────────────────┘  │            │
-                    │                       │            │
-                    └───────────────────────┘            │
-                                                          │
-                                                          │
-                    ┌─────────────────────────────────────▼──────┐
-                    │                                           │
-                    │  ┌─────────────────────────────────────┐  │
-                    │  │  GeoServer Workspace: osm_notes     │  │
-                    │  │  - Datastore: notes_wms             │  │
-                    │  │  - Layers:                          │  │
-                    │  │    • notesopen                      │  │
-                    │  │    • notesclosed                    │  │
-                    │  │    • countries                      │  │
-                    │  │    • disputedareas                  │  │
-                    │  │  - Styles: SLD files               │  │
-                    │  └─────────────────────────────────────┘  │
-                    │                                           │
-                    └───────────────────────────────────────────┘
+```mermaid
+graph TB
+    subgraph Scripts["Management Scripts"]
+        WMS_MGR[wmsManager.sh]
+    end
+    
+    subgraph Database["PostgreSQL Database"]
+        subgraph WMSSchema["wms schema"]
+            WMS_TABLE[notes_wms]
+            WMS_VIEWS[views]
+            WMS_TRIGGERS[triggers]
+        end
+        
+        subgraph PublicSchema["public schema"]
+            PUBLIC_NOTES[notes]
+            PUBLIC_COUNTRIES[countries]
+        end
+    end
+    
+    subgraph GeoServer["GeoServer Configuration"]
+        GEOSERVER_CONFIG[GeoServer Config]
+        GEOSERVER_WORKSPACE[GeoServer Workspace: osm_notes<br/>- Datastore: notes_wms<br/>- Layers:<br/>  • notesopen<br/>  • notesclosed<br/>  • countries<br/>  • disputedareas<br/>- Styles: SLD files]
+    end
+    
+    WMS_MGR -->|SQL| Database
+    Database -->|Query| GEOSERVER_CONFIG
+    GEOSERVER_CONFIG -->|Configures| GEOSERVER_WORKSPACE
+    
+    style WMS_MGR fill:#90EE90
+    style Database fill:#E0F6FF
+    style GEOSERVER_CONFIG fill:#FFE4B5
+    style GEOSERVER_WORKSPACE fill:#FFE4B5
 ```
 
 ## Installation & Setup
