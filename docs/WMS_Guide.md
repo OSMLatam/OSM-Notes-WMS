@@ -46,7 +46,7 @@ This project is part of the **OSM-Notes ecosystem**, consisting of 8 interconnec
 - **REQUIRED**: OSM-Notes-Ingestion (WMS uses the same PostgreSQL database)
 - **Optional**: OSM-Notes-Monitoring (for monitoring WMS service health)
 
-See the main [README.md](../../README.md) for complete ecosystem overview.
+See the main [README.md](../README.md) for complete ecosystem overview.
 
 ### What is WMS?
 
