@@ -640,6 +640,18 @@ this system comes from **OpenStreetMap (OSM)** and is licensed under the **Open 
 For more information about OSM licensing, see:
 [https://www.openstreetmap.org/copyright](https://www.openstreetmap.org/copyright)
 
+## GDPR Compliance
+
+**Important:** This WMS service processes and displays personal data from OpenStreetMap, including usernames (which may contain real names) and geographic locations (which may reveal where users live or frequent). We are committed to GDPR compliance.
+
+GDPR compliance mechanisms are implemented in the base project **OSM-Notes-Ingestion**. For detailed information about GDPR compliance, data processing, retention, and data subject rights, please refer to:
+
+- **GDPR Privacy Policy:** [OSM-Notes-Ingestion/docs/GDPR_Privacy_Policy.md](https://github.com/OSM-Notes/OSM-Notes-Ingestion/blob/main/docs/GDPR_Privacy_Policy.md)
+- **GDPR Procedures:** [OSM-Notes-Ingestion/docs/GDPR_Procedures.md](https://github.com/OSM-Notes/OSM-Notes-Ingestion/blob/main/docs/GDPR_Procedures.md) - Procedures for handling data subject requests
+- **GDPR SQL Scripts:** [OSM-Notes-Ingestion/sql/gdpr/README.md](https://github.com/OSM-Notes/OSM-Notes-Ingestion/blob/main/sql/gdpr/README.md) - SQL scripts to handle GDPR requests
+
+This WMS project uses the same database as OSM-Notes-Ingestion and is subject to the same GDPR compliance measures.
+
 ## Contributing
 
 Contributions are welcome! Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines.
