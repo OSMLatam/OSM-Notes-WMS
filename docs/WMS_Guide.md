@@ -14,6 +14,25 @@ The WMS (Web Map Service) project provides a map service that displays the locat
 closed OSM notes. This service allows mappers to visualize note activity geographically, helping
 identify areas that need attention or have been recently processed.
 
+### OSM Notes Ecosystem
+
+This project is part of the **OSM-Notes ecosystem**, consisting of 8 interconnected projects:
+
+1. **OSM-Notes-Ingestion** (base project) - **REQUIRED** for WMS (uses same database)
+2. **OSM-Notes-Analytics** - ETL and data warehouse
+3. **OSM-Notes-API** - REST API for programmatic access
+4. **OSM-Notes-Data** - JSON files exported from Analytics (GitHub Pages)
+5. **OSM-Notes-Viewer** - Web application consuming Data
+6. **OSM-Notes-WMS** (this project) - Web Map Service for geographic visualization
+7. **OSM-Notes-Monitoring** - Monitors all ecosystem components including WMS
+8. **OSM-Notes-Common** - Shared libraries (used by WMS as Git submodule)
+
+**WMS Dependencies:**
+- **REQUIRED**: OSM-Notes-Ingestion (WMS uses the same PostgreSQL database)
+- **Optional**: OSM-Notes-Monitoring (for monitoring WMS service health)
+
+See the main [README.md](../../README.md) for complete ecosystem overview.
+
 ### What is WMS?
 
 WMS (Web Map Service) is an OGC (Open Geospatial Consortium) standard that provides map images over
@@ -248,10 +267,18 @@ cd OSM-Notes-WMS
 
 ```bash
 # Test WMS service
-curl "http://localhost:8080/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities"
+# Production:
+curl "https://geoserver.osm.lat/geoserver/osm_notes/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities"
+
+# Development:
+curl "http://localhost:8080/geoserver/osm_notes/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities"
 
 # Check layer availability
-curl "http://localhost:8080/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=osm_notes:notes_wms_layer&STYLES=&CRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=256&HEIGHT=256&FORMAT=image/png"
+# Production:
+curl "https://geoserver.osm.lat/geoserver/osm_notes/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=osm_notes:notesopen&STYLES=&CRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=256&HEIGHT=256&FORMAT=image/png"
+
+# Development:
+curl "http://localhost:8080/geoserver/osm_notes/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=osm_notes:notesopen&STYLES=&CRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=256&HEIGHT=256&FORMAT=image/png"
 ```
 
 ### Quick Setup (Automated)
@@ -455,7 +482,9 @@ echo "✅ Installation completed successfully!"
 #!/bin/bash
 # WMS health check script
 
-GEOSERVER_URL="${GEOSERVER_URL:-http://localhost:8080/geoserver}"
+# Production GeoServer: https://geoserver.osm.lat/geoserver
+# Development GeoServer: http://localhost:8080/geoserver
+GEOSERVER_URL="${GEOSERVER_URL:-https://geoserver.osm.lat/geoserver}"
 GEOSERVER_USER="${GEOSERVER_USER:-admin}"
 GEOSERVER_PASSWORD="${GEOSERVER_PASSWORD:-geoserver}"
 
@@ -622,7 +651,12 @@ actual configuration.
 2. **GeoServer Configuration**
 
    ```bash
-   GEOSERVER_URL="http://localhost:8080/geoserver"
+   # Production GeoServer
+   GEOSERVER_URL="https://geoserver.osm.lat/geoserver"
+   
+   # Development GeoServer (alternative)
+   # GEOSERVER_URL="http://localhost:8080/geoserver"
+   
    GEOSERVER_USER="admin"
    GEOSERVER_PASSWORD="geoserver"
    ```
@@ -692,12 +726,20 @@ export WMS_STYLE_CLOSED_FILE="/path/to/my/custom_closed.sld"
 
 #### Service URLs
 
-- **GetCapabilities**:
-  `http://localhost:8080/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities`
-- **GetMap**:
-  `http://localhost:8080/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=osm_notes:notes_wms_layer&STYLES=&CRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=256&HEIGHT=256&FORMAT=image/png`
-- **GetFeatureInfo**:
-  `http://localhost:8080/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=osm_notes:notes_wms_layer&QUERY_LAYERS=osm_notes:notes_wms_layer&INFO_FORMAT=application/json&I=128&J=128&WIDTH=256&HEIGHT=256&CRS=EPSG:4326&BBOX=-180,-90,180,90`
+**Production GeoServer**: `https://geoserver.osm.lat/geoserver/osm_notes/wms`
+
+- **GetCapabilities** (Production):
+  `https://geoserver.osm.lat/geoserver/osm_notes/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities`
+- **GetCapabilities** (Development):
+  `http://localhost:8080/geoserver/osm_notes/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities`
+- **GetMap** (Production):
+  `https://geoserver.osm.lat/geoserver/osm_notes/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=osm_notes:notesopen&STYLES=&CRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=256&HEIGHT=256&FORMAT=image/png`
+- **GetMap** (Development):
+  `http://localhost:8080/geoserver/osm_notes/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&LAYERS=osm_notes:notesopen&STYLES=&CRS=EPSG:4326&BBOX=-180,-90,180,90&WIDTH=256&HEIGHT=256&FORMAT=image/png`
+- **GetFeatureInfo** (Production):
+  `https://geoserver.osm.lat/geoserver/osm_notes/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=osm_notes:notesopen&QUERY_LAYERS=osm_notes:notesopen&INFO_FORMAT=application/json&I=128&J=128&WIDTH=256&HEIGHT=256&CRS=EPSG:4326&BBOX=-180,-90,180,90`
+- **GetFeatureInfo** (Development):
+  `http://localhost:8080/geoserver/osm_notes/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=osm_notes:notesopen&QUERY_LAYERS=osm_notes:notesopen&INFO_FORMAT=application/json&I=128&J=128&WIDTH=256&HEIGHT=256&CRS=EPSG:4326&BBOX=-180,-90,180,90`
 
 #### GetFeatureInfo Request
 
@@ -755,8 +797,10 @@ GetFeatureInfo returns feature information for a specific pixel location on the 
 1. **Add WMS Layer**
    - Open JOSM
    - Go to `Imagery` → `Add WMS Layer`
-   - Enter WMS URL: `http://localhost:8080/geoserver/wms`
-   - Select layer: `osm_notes:notes_wms_layer`
+   - Enter WMS URL: 
+     - **Production**: `https://geoserver.osm.lat/geoserver/osm_notes/wms`
+     - **Development**: `http://localhost:8080/geoserver/osm_notes/wms`
+   - Select layer: `osm_notes:notesopen` (for open notes) or `osm_notes:notesclosed` (for closed notes)
 
 2. **Configure Layer**
    - Set transparency as needed
@@ -768,8 +812,10 @@ GetFeatureInfo returns feature information for a specific pixel location on the 
 1. **Add WMS Layer**
    - Open Vespucci
    - Go to `Layer` → `Add WMS Layer`
-   - Enter WMS URL: `http://localhost:8080/geoserver/wms`
-   - Select layer: `osm_notes:notes_wms_layer`
+   - Enter WMS URL: 
+     - **Production**: `https://geoserver.osm.lat/geoserver/osm_notes/wms`
+     - **Development**: `http://localhost:8080/geoserver/osm_notes/wms`
+   - Select layer: `osm_notes:notesopen` (for open notes) or `osm_notes:notesclosed` (for closed notes)
 
 ### Interpreting the Map
 
