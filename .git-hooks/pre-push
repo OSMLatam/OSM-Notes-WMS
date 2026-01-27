@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Pre-push hook for OSM-Notes-WMS
+# Unified Git hook for Bash/SQL projects
+# Author: Andres Gomez (AngocA)
+# Version: 2026-01-27
+# Runs quality tests before allowing push
+#
+# To install: ln -sf ../../.git-hooks/pre-push .git/hooks/pre-push
+
+set -e
+
+echo "🚀 Running pre-push validation..."
+echo ""
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Check if we're in the right directory
+if [ ! -d "tests" ]; then
+    echo -e "${RED}❌ Not in project root directory${NC}"
+    exit 1
+fi
+
+# Run CI tests if available (light version - quality checks only)
+if [ -f "scripts/run_ci_tests.sh" ]; then
+    echo -e "${BLUE}🔍 Running quality checks...${NC}"
+    echo -e "${YELLOW}ℹ️  Running light validation (formatting checks only)${NC}"
+    echo ""
+    
+    # Run formatting checks only (fast)
+    if command -v shfmt &> /dev/null; then
+        echo "Checking bash formatting..."
+        if find bin tests -name "*.sh" -type f -exec shfmt -d {} \; 2>&1 | grep -q "."; then
+            echo -e "${RED}❌ Code formatting issues found${NC}"
+            find bin tests -name "*.sh" -type f -exec shfmt -d {} \;
+            exit 1
+        fi
+        echo -e "${GREEN}✅ Formatting check passed${NC}"
+    fi
+    echo ""
+else
+    echo -e "${YELLOW}⚠️  CI tests script not found, skipping...${NC}"
+    echo ""
+fi
+
+echo -e "${GREEN}✅ Pre-push validation complete!${NC}"
+echo ""
+
+exit 0
