@@ -541,6 +541,24 @@ done
   - Includes schema verification instructions and `verifySchema.sql` script
 - **[sld/README.md](./sld/README.md)**: Style files documentation
 
+## Testing
+
+### Quick Start
+
+```bash
+# Run all tests (master test runner)
+./tests/run_all_tests.sh
+```
+
+**Master Test Runner**: `tests/run_all_tests.sh` - Executes all test suites (unit tests, integration tests, CI validation)
+
+The test suite includes:
+- **Unit Tests**: BATS tests for WMS manager and GeoServer configuration scripts
+- **Integration Tests**: End-to-end WMS workflow tests
+- **CI Tests**: Code formatting and validation checks
+
+For detailed testing information, see the test documentation in the `tests/` directory.
+
 ## Architecture Decision Records
 
 Architecture Decision Records (ADRs) document important architectural decisions made in this project:
